@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="95074e17-ae24-4468-83ca-bd23b3c124cb" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="1eabIuj9Dig85hrzrJT3YRZgQV1" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="RunManager">
+    <configuration name="App.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/client-app/src/App.js" working-dir="$PROJECT_DIR$/client-app/src">
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Node.js.App.js" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="95074e17-ae24-4468-83ca-bd23b3c124cb" name="Default Changelist" comment="" />
+      <created>1594562574693</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1594562574693</updated>
+      <workItem from="1594562576260" duration="108000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="2" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="360" y="188" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1594562611806">
+      <screen x="0" y="23" width="1792" height="1006" />
+    </state>
+    <state x="360" y="188" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1792.1006@0.23.1792.1006" timestamp="1594562611806" />
+    <state width="1771" height="273" key="GridCell.Tab.0.bottom" timestamp="1594562683926">
+      <screen x="0" y="23" width="1792" height="1006" />
+    </state>
+    <state width="1771" height="273" key="GridCell.Tab.0.bottom/0.23.1792.1006@0.23.1792.1006" timestamp="1594562683926" />
+    <state width="1771" height="273" key="GridCell.Tab.0.center" timestamp="1594562683926">
+      <screen x="0" y="23" width="1792" height="1006" />
+    </state>
+    <state width="1771" height="273" key="GridCell.Tab.0.center/0.23.1792.1006@0.23.1792.1006" timestamp="1594562683926" />
+    <state width="1771" height="273" key="GridCell.Tab.0.left" timestamp="1594562683925">
+      <screen x="0" y="23" width="1792" height="1006" />
+    </state>
+    <state width="1771" height="273" key="GridCell.Tab.0.left/0.23.1792.1006@0.23.1792.1006" timestamp="1594562683925" />
+    <state width="1771" height="273" key="GridCell.Tab.0.right" timestamp="1594562683926">
+      <screen x="0" y="23" width="1792" height="1006" />
+    </state>
+    <state width="1771" height="273" key="GridCell.Tab.0.right/0.23.1792.1006@0.23.1792.1006" timestamp="1594562683926" />
+  </component>
+</project>
