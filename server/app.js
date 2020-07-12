@@ -34,7 +34,7 @@ const init = async () => {
         path: '/todos',
         handler: async (request, h) => {
             // payload, json with description as string
-            let inserted = Todo.query()
+            let inserted = await Todo.query()
                 .insert(request.payload)
                 .returning('*');
             return h.response(inserted).code(201);
