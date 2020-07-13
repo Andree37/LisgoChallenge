@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Todo from './Todo'
+import './TodoList.css'
 
 export default function TodoList(props) {
     const todos = props.todo;
@@ -8,18 +9,9 @@ export default function TodoList(props) {
     const [hideCompleted, setHideCompleted] = useState(false);
     const [listTodos, setListTodos] = useState(
         todos.map(todo => {
-            return <Todo state={todo} key={todo.id} deleteTodo={deleteTodo} />
+            return <Todo state={todo} key={todo.id} />
         })
     );
-
-    function deleteTodo(id) {
-        let newTodos = listTodos.filter(todo => {
-            return Number(todo.key) !== id
-        })
-        // fix this with global memory, how?
-        console.log(newTodos);
-        setListTodos(newTodos);
-    }
 
     function handleNewTaskName(e) {
         setNewTaskName(e.target.value);
@@ -34,7 +26,7 @@ export default function TodoList(props) {
             id: listTodos.length + 1
         }
         listTodos.push(
-            <Todo state={newTask} key={newTask.id} deleteTodo={deleteTodo}/>
+            <Todo state={newTask} key={newTask.id} />
         )
         let allTodos = listTodos.slice();
         setListTodos(allTodos);
@@ -45,27 +37,35 @@ export default function TodoList(props) {
     }
 
     return (
-        <section>
-            <input
-                type="text"
-                value={newTaskName}
-                onChange={handleNewTaskName}
-            />
-            <button onClick={handleCreateTask}>
-                Create
-            </button>
-            <br />
+        <section class="container">
+            <div class="header">
+                <input
+                    class="taskInput"
+                    type="text"
+                    value={newTaskName}
+                    onChange={handleNewTaskName}
+                    placeholder="Write new task here..."
+                />
+                <button
+                    onClick={handleCreateTask}
+                    class="btnInput">
+                    Create
+                </button>
+            </div>
+            <label>Tasks</label>
+            <hr/>
             <div>
                 {listTodos}
             </div>
-            <span>
-                <label>Hide completed</label>
+            <div class="complete">
+                <label class="completeLabel">Hide completed</label>
                 <input
+                    class="checkboxInput"
                     type="checkbox"
                     value={hideCompleted}
                     onChange={handleHideCompleted}
                 />
-            </span>
+            </div>
         </section>
     );
 }
