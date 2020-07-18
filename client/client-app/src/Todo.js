@@ -14,15 +14,15 @@ export default function Todo(props) {
     }
 
     return (
-        <section class="line">
+        <section className="line">
             <input
-                class="checkboxInput"
+                className="checkboxInput"
                 type="checkbox"
                 checked={isComplete}
                 onChange={handleIsCompleteChange}
             />
             <input
-                class="tasks"
+                className="tasks"
                 type="text"
                 value={description}
                 onChange={handleDescriptionChange}
