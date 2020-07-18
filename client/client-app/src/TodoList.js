@@ -12,7 +12,7 @@ export default function TodoList(props) {
 
     useEffect(() => {
         setListTodos(store.todos.get.map(todo => {
-            return <Todo state={todo} key={todo.id} />
+            return <Todo state={todo} key={todo.s_id} />
         }));
     }, [store.todos.get]);
 
@@ -65,7 +65,7 @@ export default function TodoList(props) {
                 <input
                     className="checkboxInput"
                     type="checkbox"
-                    value={hideCompleted}
+                    defaultChecked={hideCompleted}
                     onChange={handleHideCompleted}
                 />
             </div>
