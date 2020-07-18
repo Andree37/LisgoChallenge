@@ -1,33 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import TodoList from './TodoList'
 
-const todo = [
-  {
-    id: 1,
-    state: 'INCOMPLETE',
-    description: 'desc',
-    dateAdded: new Date().toUTCString()
-  },
-  {
-    id: 2,
-    state: 'INCOMPLETE',
-    description: 'desc2',
-    dateAdded: new Date().toUTCString()
-  },
-  {
-    id: 3,
-    state: 'COMPLETE',
-    description: 'desc3',
-    dateAdded: new Date().toUTCString()
-  },
-];
+export const TodoContext = React.createContext([]);
 
 function App() {
+  const [todos, setTodos] = useState([]);
+
+  const store = {
+    todos: { get: todos, set: setTodos}
+  }
+
+  //get todos after app is mounted
+  useEffect(() => {
+    fetch("http://localhost:3000/todos")
+      .then(res => res.json())
+      .then((result) => {
+        setTodos(result);
+      })
+  }, []);
+
   return (
-    <div>
-      <TodoList todo={todo} />
-    </div>
+    <TodoContext.Provider value={store}>
+      <div>
+        <TodoList />
+      </div>
+    </TodoContext.Provider>
   );
 }
+
 
 export default App;

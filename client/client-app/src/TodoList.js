@@ -1,17 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Todo from './Todo'
 import './TodoList.css'
+import { TodoContext } from './App'
 
 export default function TodoList(props) {
-    const todos = props.todo;
+    const store = useContext(TodoContext);
 
     const [newTaskName, setNewTaskName] = useState('');
     const [hideCompleted, setHideCompleted] = useState(false);
-    const [listTodos, setListTodos] = useState(
-        todos.map(todo => {
+    const [listTodos, setListTodos] = useState([]);
+
+    useEffect(() => {
+        setListTodos(store.todos.get.map(todo => {
             return <Todo state={todo} key={todo.id} />
-        })
-    );
+        }));
+    }, [store.todos.get]);
 
     function handleNewTaskName(e) {
         setNewTaskName(e.target.value);
@@ -37,10 +40,10 @@ export default function TodoList(props) {
     }
 
     return (
-        <section class="container">
-            <div class="header">
+        <section className="container">
+            <div className="header">
                 <input
-                    class="taskInput"
+                    className="taskInput"
                     type="text"
                     value={newTaskName}
                     onChange={handleNewTaskName}
@@ -48,19 +51,19 @@ export default function TodoList(props) {
                 />
                 <button
                     onClick={handleCreateTask}
-                    class="btnInput">
+                    className="btnInput">
                     Create
                 </button>
             </div>
             <label>Tasks</label>
-            <hr/>
+            <hr />
             <div>
                 {listTodos}
             </div>
-            <div class="complete">
-                <label class="completeLabel">Hide completed</label>
+            <div className="complete">
+                <label className="completeLabel">Hide completed</label>
                 <input
-                    class="checkboxInput"
+                    className="checkboxInput"
                     type="checkbox"
                     value={hideCompleted}
                     onChange={handleHideCompleted}
