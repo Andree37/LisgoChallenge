@@ -7,31 +7,72 @@ function App() {
   const [todos, setTodos] = useState([]);
 
   const store = {
-    todos: { get: todos, set: setTodos, delete: deleteTodo }
+    todos: { get: todos, set: setTodos, delete: deleteTodo, create: createTodo, edit: editTodo }
   }
 
   function deleteTodo(id) {
-
-    let deleteInit = {
-      method: 'DELETE',
-      headers: new Headers(),
-      mode: 'cors',
-      cache: 'default'
-    }
-
-    fetch(`http://localhost:3000/todos/${id}`, deleteInit)
+    fetch(`http://localhost:3000/todos/${id}`, { method: 'DELETE' })
       .then(res => {
         if (res.ok) {
-          let newTodos = store.todos.get.filter(t => {
+          let newTodos = todos.filter(t => {
             return t.id !== id;
           })
-          store.todos.set(newTodos);
+          setTodos(newTodos);
         }
         else {
-          console.log("Did not delete")
+          console.log("Did not delete");
         }
       })
+  }
 
+  function createTodo(description) {
+    let objTodo = JSON.stringify({ description: description });
+    fetch('http://localhost:3000/todos', {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }, body: objTodo
+    })
+      .then(res => {
+        if (res.ok) {
+          res.json()
+            .then(result => {
+              // dont think i need to recreate a new array for this
+              let newTodos = todos.slice();
+              newTodos.push(result);
+              setTodos(newTodos);
+            })
+        }
+        else {
+          console.log("Did not create");
+        }
+      })
+  }
+
+  function editTodo(id, changes) {
+    let objTodo = JSON.stringify(changes);
+    fetch(`http://localhost:3000/todos/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }, body: objTodo
+    })
+      .then(res => {
+        if (res.ok) {
+          res.json()
+            .then(result => {
+              // probably a better way of doing this, making it O(1) need to think more, maybe getting it from the key on the array?
+              todos.forEach(t => {
+                if(t.id === id) {
+                  t.description = result.description;
+                }
+              });
+              alert('You changed the description to: ' + result.description);
+            })
+        }
+      });
   }
 
   //get todos after app is mounted

@@ -8,11 +8,12 @@ export default function Todo(props) {
     const store = useContext(TodoContext);
 
     function handleDescriptionChange(e) {
-        setDescription(e.target.description);
+        setDescription(e.target.value);
     }
 
     function handleIsCompleteChange(e) {
         setIsComplete(!isComplete);
+        store.todos.edit(props.state.id)
     }
 
     return (
@@ -31,7 +32,8 @@ export default function Todo(props) {
             />
             <button
                 type="button"
-                className="link-button">
+                className="link-button"
+                onClick={() => store.todos.edit(props.state.id, {description})}>
                 Edit
             </button>
             <label>/</label>

@@ -11,7 +11,8 @@ export default function TodoList(props) {
     const [listTodos, setListTodos] = useState([]);
 
     useEffect(() => {
-        setListTodos(store.todos.get.map(todo => {
+        let arrTodos = store.todos.get;
+        setListTodos(arrTodos.map(todo => {
             return <Todo state={todo} key={todo.s_id} />
         }));
     }, [store.todos.get]);
@@ -21,18 +22,7 @@ export default function TodoList(props) {
     }
 
     function handleCreateTask(e) {
-        //do ajax call to insert
-
-        let newTask = {
-            description: newTaskName,
-            state: 'INCOMPLETE',
-            id: listTodos.length + 1
-        }
-        listTodos.push(
-            <Todo state={newTask} key={newTask.id} />
-        )
-        let allTodos = listTodos.slice();
-        setListTodos(allTodos);
+        store.todos.create(newTaskName);
     }
 
     function handleHideCompleted(e) {
