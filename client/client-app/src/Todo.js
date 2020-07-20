@@ -14,7 +14,19 @@ export default function Todo(props) {
 
     function handleIsCompleteChange(e) {
         setIsComplete(!isComplete);
-        //editTodo(props.state.id);
+        //change state
+        let state = !isComplete ? "COMPLETE" : "INCOMPLETE";
+        todoFunctions.edit(props.state.id, { state });
+    }
+
+    function changeDescription() {
+        try {
+            todoFunctions.edit(props.state.id, { description });
+        }
+        catch (err){
+            console.log(err.message);
+        }
+        
     }
 
     return (
@@ -34,7 +46,7 @@ export default function Todo(props) {
             <button
                 type="button"
                 className="link-button"
-                onClick={() => todoFunctions.edit(props.state.id, { description })}>
+                onClick={() => changeDescription()}>
                 Edit
             </button>
             <label>/</label>

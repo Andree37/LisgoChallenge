@@ -85,7 +85,8 @@ const init = async () => {
             if (Array.isArray(item) && !item.length) {
                 return h.response('404 not found').code(404);
             }
-            else if(item.state === 'COMPLETE'){
+            // if user wants to change description but the task is already complete
+            else if(item.state === 'COMPLETE' && request.payload.description){
                 return h.response('400 already completed').code(400);
             }
 

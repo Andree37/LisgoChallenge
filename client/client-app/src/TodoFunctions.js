@@ -4,7 +4,7 @@ import { Store } from './Store'
 export default function useTodoFunctions() {
     const { state, dispatch } = useContext(Store);
 
-    async function getTodos() {
+    function getTodos() {
         fetch("http://localhost:3000/todos")
             .then(res => res.json())
             .then((result) => {
@@ -15,8 +15,8 @@ export default function useTodoFunctions() {
             });
     }
 
-    async function deleteTodo(id) {
-        fetch(`http://localhost:3000/todos/${id}`, { method: 'DELETE'})
+    function deleteTodo(id) {
+        fetch(`http://localhost:3000/todos/${id}`, { method: 'DELETE' })
             .then(res => {
                 if (res.ok) {
                     let newTodos = state.todos.filter(t => {
@@ -31,8 +31,8 @@ export default function useTodoFunctions() {
                 }
             })
     }
-    
-    async function editTodo(id, changes) {
+        
+    function editTodo(id, changes) {
         let objTodo = JSON.stringify(changes);
         fetch(`http://localhost:3000/todos/${id}`, {
             method: 'PATCH',
@@ -50,15 +50,19 @@ export default function useTodoFunctions() {
                             state.todos.forEach(t => {
                                 if (t.id === id) {
                                     t.description = result.description;
+                                    t.state = result.state;
                                 }
                             });
-                            alert('You changed the description to: ' + result.description);
-                        })
+                        });
+                        alert("Updated Task");
                 }
-            });
+                else {
+                    throw new Error("Task is already completed, cannot change description");
+                }
+            }).catch(err => {console.log(err.message)})
     }
 
-    async function createTodo(description) {
+    function createTodo(description) {
         let objTodo = JSON.stringify({
             description: description
         });

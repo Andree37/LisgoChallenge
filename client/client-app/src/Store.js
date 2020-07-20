@@ -3,8 +3,7 @@ import React, { useReducer } from 'react'
 export const Store = React.createContext();
 
 const initialState = {
-    todos: [],
-    todoFuntions: []
+    todos: []
 }
 
 function reducer(state, action) {
