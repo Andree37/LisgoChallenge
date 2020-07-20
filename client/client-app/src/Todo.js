@@ -20,11 +20,11 @@ export default function Todo(props) {
     }
 
     function changeDescription() {
-        try {
+        if(!isComplete) {
             todoFunctions.edit(props.state.id, { description });
         }
-        catch (err){
-            console.log(err.message);
+        else {
+            alert("Cannot change description of a completed task, remove completion first")
         }
         
     }
