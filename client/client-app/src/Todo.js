@@ -1,11 +1,12 @@
 import React, { useState, useContext } from 'react';
-import './Todo.css'
-import { TodoContext } from './App'
+import './Todo.css';
+import { Store } from './Store';
 
 export default function Todo(props) {
     const [description, setDescription] = useState(props.state.description);
     const [isComplete, setIsComplete] = useState(props.state.state === "COMPLETE");
-    const store = useContext(TodoContext);
+
+    const { state, dispatch } = useContext(Store);
 
     function handleDescriptionChange(e) {
         setDescription(e.target.value);
@@ -13,7 +14,50 @@ export default function Todo(props) {
 
     function handleIsCompleteChange(e) {
         setIsComplete(!isComplete);
-        store.todos.edit(props.state.id)
+        //editTodo(props.state.id);
+    }
+
+    async function deleteTodo(id) {
+        fetch(`http://localhost:3000/todos/${id}`, { method: 'DELETE'})
+            .then(res => {
+                if (res.ok) {
+                    let newTodos = state.todos.filter(t => {
+                        return t.id !== id;
+                    })
+                    return dispatch({
+                        type: 'DELETE_TODO',
+                        payload: newTodos
+                    });
+                } else {
+                    console.log("Did not delete");
+                }
+            })
+    }
+    
+    async function editTodo(id, changes) {
+        let objTodo = JSON.stringify(changes);
+        fetch(`http://localhost:3000/todos/${id}`, {
+            method: 'PATCH',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: objTodo
+        })
+            .then(res => {
+                if (res.ok) {
+                    res.json()
+                        .then(result => {
+                            // probably a better way of doing this, making it O(1) need to think more, maybe getting it from the key on the array?
+                            state.todos.forEach(t => {
+                                if (t.id === id) {
+                                    t.description = result.description;
+                                }
+                            });
+                            alert('You changed the description to: ' + result.description);
+                        })
+                }
+            });
     }
 
     return (
@@ -33,14 +77,14 @@ export default function Todo(props) {
             <button
                 type="button"
                 className="link-button"
-                onClick={() => store.todos.edit(props.state.id, {description})}>
+                onClick={() => editTodo(props.state.id, { description })}>
                 Edit
             </button>
             <label>/</label>
             <button
                 type="button"
                 className="link-button"
-                onClick={() => store.todos.delete(props.state.id)}>
+                onClick={() => deleteTodo(props.state.id)}>
                 Delete
             </button>
         </section>

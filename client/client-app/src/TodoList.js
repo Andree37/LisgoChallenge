@@ -1,32 +1,59 @@
 import React, { useState, useContext, useEffect } from 'react';
 import Todo from './Todo'
 import './TodoList.css'
-import { TodoContext } from './App'
+import { Store } from './Store'
 
 export default function TodoList(props) {
-    const store = useContext(TodoContext);
+    const { state, dispatch } = useContext(Store);
 
     const [newTaskName, setNewTaskName] = useState('');
     const [hideCompleted, setHideCompleted] = useState(false);
     const [listTodos, setListTodos] = useState([]);
 
     useEffect(() => {
-        let arrTodos = store.todos.get;
+        let arrTodos = state.todos;
         setListTodos(arrTodos.map(todo => {
             return <Todo state={todo} key={todo.s_id} />
         }));
-    }, [store.todos.get]);
+    }, [state.todos]);
 
     function handleNewTaskName(e) {
         setNewTaskName(e.target.value);
     }
 
     function handleCreateTask(e) {
-        store.todos.create(newTaskName);
+        createTodo(newTaskName);
     }
 
     function handleHideCompleted(e) {
         setHideCompleted(!hideCompleted);
+    }
+
+    async function createTodo(description) {
+        let objTodo = JSON.stringify({
+            description: description
+        });
+        fetch('http://localhost:3000/todos', {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: objTodo
+        })
+            .then(res => {
+                if (res.ok) {
+                    res.json()
+                        .then(result => {
+                            return dispatch({
+                                type: 'ADD_TODO',
+                                payload: result
+                            });
+                        });
+                } else {
+                    console.log("Did not create");
+                }
+            })
     }
 
     return (
