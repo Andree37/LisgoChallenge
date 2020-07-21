@@ -1,3 +1,5 @@
+'use strict';
+
 const { Model } = require('objection');
 
 class TodoModel extends Model {
