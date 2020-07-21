@@ -1,30 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import TodoList from './TodoList'
-
-export const TodoContext = React.createContext([]);
+import { Store } from './Store';
+import useTodoFunctions from './TodoFunctions'
 
 function App() {
-  const [todos, setTodos] = useState([]);
-
-  const store = {
-    todos: { get: todos, set: setTodos}
-  }
+  const { state } = useContext(Store);
+  const todoFunctions = useTodoFunctions();
 
   //get todos after app is mounted
   useEffect(() => {
-    fetch("http://localhost:3000/todos")
-      .then(res => res.json())
-      .then((result) => {
-        setTodos(result);
-      })
-  }, []);
+    state.todos.length === 0 && todoFunctions.get();
+  });
 
   return (
-    <TodoContext.Provider value={store}>
-      <div>
-        <TodoList />
-      </div>
-    </TodoContext.Provider>
+    <div>
+      <TodoList />
+    </div>
   );
 }
 

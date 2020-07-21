@@ -1,38 +1,30 @@
 import React, { useState, useContext, useEffect } from 'react';
 import Todo from './Todo'
 import './TodoList.css'
-import { TodoContext } from './App'
+import { Store } from './Store'
+import useTodoFunctions from './TodoFunctions'
 
 export default function TodoList(props) {
-    const store = useContext(TodoContext);
+    const { state } = useContext(Store);
+    const todoFunctions = useTodoFunctions();
 
     const [newTaskName, setNewTaskName] = useState('');
     const [hideCompleted, setHideCompleted] = useState(false);
     const [listTodos, setListTodos] = useState([]);
 
     useEffect(() => {
-        setListTodos(store.todos.get.map(todo => {
-            return <Todo state={todo} key={todo.id} />
+        let arrTodos = state.todos;
+        setListTodos(arrTodos.map(todo => {
+            return <Todo state={todo} key={todo.s_id} />
         }));
-    }, [store.todos.get]);
+    }, [state.todos]);
 
     function handleNewTaskName(e) {
         setNewTaskName(e.target.value);
     }
 
     function handleCreateTask(e) {
-        //do ajax call to insert
-
-        let newTask = {
-            description: newTaskName,
-            state: 'INCOMPLETE',
-            id: listTodos.length + 1
-        }
-        listTodos.push(
-            <Todo state={newTask} key={newTask.id} />
-        )
-        let allTodos = listTodos.slice();
-        setListTodos(allTodos);
+        todoFunctions.create(newTaskName);
     }
 
     function handleHideCompleted(e) {
@@ -65,7 +57,7 @@ export default function TodoList(props) {
                 <input
                     className="checkboxInput"
                     type="checkbox"
-                    value={hideCompleted}
+                    defaultChecked={hideCompleted}
                     onChange={handleHideCompleted}
                 />
             </div>
