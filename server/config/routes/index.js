@@ -1,5 +1,9 @@
 'use strict';
 
 const todo = require('./todo');
+const users = require('./users');
 
-module.exports = [].concat(todo);
+module.exports = [
+    ...todo,
+    ...users
+]
