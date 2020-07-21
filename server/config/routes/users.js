@@ -4,11 +4,19 @@ const usersHandler = require('../handlers/users.handler')
 
 module.exports = [
     {
-        method: 'POST',
+        method: 'PUT',
         path: '/users',
         options:{
             auth: false
         },
-        handler: usersHandler.create()
+        handler: usersHandler.create
+    },
+    {
+        method: 'GET',
+        path: '/users',
+        options:{
+            auth: false
+        },
+        handler: usersHandler.get
     }
 ]

@@ -49,7 +49,7 @@ const init = async () => {
         }
     });
 
-    server.auth.default('jwt');
+    //server.auth.default('jwt');
 
     await server.start();
     console.log('Server running on %s', server.info.uri);

@@ -4,8 +4,10 @@ const Todo = require('../models/todoModel');
 
 const create = async (request, h) => {
     // payload, json with description as string
+    let data = request.payload;
+    data['user_id'] = "ff87487a-4026-4096-a603-5509147a8ece";
     let inserted = await Todo.query()
-        .insert(request.payload)
+        .insert(data)
         .returning('*');
     return h.response(inserted).code(201);
 }
@@ -14,15 +16,18 @@ const get = async (request, h) => {
     let filter = request.query.filter && request.query.filter !== 'ALL' ? request.query.filter : null;
     let orderBy = request.query.orderBy ? request.query.orderBy : 'DATE_ADDED';
 
+    let result;
     if (filter) {
-        return Todo.query()
+        result = await Todo.query()
+            .withGraphFetched('creator')
             .where('state', filter.toLowerCase())
             .orderBy(orderBy.toLowerCase());
     } else {
-        return Todo.query()
+        result = await Todo.query()
+            .withGraphFetched('creator')
             .orderBy(orderBy.toLowerCase());
     }
-
+    return h.response(result);
 }
 
 const edit = async (request, h) => {
@@ -49,11 +54,12 @@ const edit = async (request, h) => {
 
     // payload has state and description as json so we add the new date for updated
     let patch = request.payload;
-    patch['updated_at'] = new Date().toUTCString();
-    return Todo.query()
+    let result = await Todo.query()
         .findById(id)
         .patch(patch)
         .returning('*');
+
+    return h.response(result);
 }
 
 const remove = async (request, h) => {
