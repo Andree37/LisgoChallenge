@@ -5,7 +5,8 @@ const Todo = require('../models/todoModel');
 const create = async (request, h) => {
     // payload, json with description as string
     let data = request.payload;
-    data['user_id'] = "ff87487a-4026-4096-a603-5509147a8ece";
+    //change this asdjahsdaskjdhauishaskdjhasduywaekjshdkawekasdmadhwaekuwyekajshjdwkaudwkahjdshawkudahdas <- to notice
+    data['user_id'] = "0cf25ddc-9669-43d7-a7c6-403c5bb77213";
     let inserted = await Todo.query()
         .insert(data)
         .returning('*');

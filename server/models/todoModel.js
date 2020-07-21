@@ -7,12 +7,9 @@ class TodoModel extends Model {
         return 'todo';
     }
 
-    async $afterUpdate(opt, queryContext) {
-        await super.$afterUpdate(opt, queryContext);
-        let dateNow = new Date().toUTCString();
-        this.$query()
-            .update({updated_at: dateNow})
-            .where('id', this.$id());
+    async $beforeUpdate(options, context) {
+        // update the time of update on task
+        this.updated_at = new Date().toUTCString();
     }
 
     static get relationMappings() {

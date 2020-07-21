@@ -1,20 +1,19 @@
 'use strict';
 
 const Users = require('../models/usersModel');
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
+const hash = require('../utils/hash');
+
 
 const create = async (request, h) => {
     // payload, json with name, surname and password
     let strPassword = request.payload['password'].toString();
+    let hash = await hash.make(strPassword);
+
     let data = {
         name: request.payload['name'],
-        surname: request.payload['surname']
+        surname: request.payload['surname'],
+        password: hash
     }
-
-    await bcrypt.hash(strPassword, saltRounds).then(function (hash) {
-        data.password = hash;
-    });
 
     let inserted = await Users.query()
         .insert(data)

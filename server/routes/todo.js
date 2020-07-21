@@ -1,6 +1,6 @@
 'use strict';
 
-const todoHandler = require('../handlers/todo.handler')
+const todoHandler = require('../handlers/todoHandler')
 
 module.exports = [
     {

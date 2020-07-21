@@ -6,7 +6,7 @@ const Hapi = require('@hapi/hapi');
 const {Model} = require('objection');
 const Knex = require('knex');
 const hapiAuthJwt2 = require('hapi-auth-jwt2');
-const routes = require('./config/routes/index');
+const routes = require('./routes/index');
 
 // Initialize knex.
 const knex = Knex({

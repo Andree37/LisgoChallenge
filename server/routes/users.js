@@ -1,6 +1,6 @@
 'use strict';
 
-const usersHandler = require('../handlers/users.handler')
+const usersHandler = require('../handlers/usersHandler')
 
 module.exports = [
     {
