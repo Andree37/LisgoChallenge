@@ -3,7 +3,6 @@
 const Users = require('../models/usersModel');
 const hash = require('../utils/hash');
 
-
 const create = async (request, h) => {
     // payload, json with name, surname and password
     let strPassword = request.payload['password'].toString();

@@ -1,14 +1,15 @@
 'use strict';
 
-const env = require('./envVariables.json')
-
 const Hapi = require('@hapi/hapi');
 const {Model} = require('objection');
 const Knex = require('knex');
 const hapiAuthJwt2 = require('hapi-auth-jwt2');
-const routes = require('./routes/index');
+const routes = require('./routes/indexRoutes');
 
-// Initialize knex.
+const env = require('./envVariables.json')
+const jwtStrategy = require('./authentication/strategies/JWT');
+
+// Initialize knex
 const knex = Knex({
     client: env.DATABASE_CLIENT,
     useNullAsDefault: true,
@@ -39,17 +40,9 @@ const init = async () => {
 
     await server.register(hapiAuthJwt2);
 
-    server.auth.strategy('jwt', 'jwt', {
-        key: env.JWT_KEY,
-        validate: function (decoded, req, h) {
-            return {isValid: true}
-        },
-        verifyOptions: {
-            algorithms: ['HS256']
-        }
-    });
+    server.auth.strategy(jwtStrategy.name, jwtStrategy.schema, jwtStrategy.options);
 
-    //server.auth.default('jwt');
+    server.auth.default(jwtStrategy.name);
 
     await server.start();
     console.log('Server running on %s', server.info.uri);
