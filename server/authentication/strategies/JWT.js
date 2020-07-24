@@ -1,6 +1,6 @@
 'use strict'
 
-const env = require('/envVariables.json');
+const env = require('../../envVariables.json');
 
 const name = 'jwt';
 const schema = 'jwt';

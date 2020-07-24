@@ -1,13 +1,17 @@
 'use strict';
 
-const loginHandler = require('../handlers/loginHandler')
+const loginHandler = require('../handlers/loginHandler');
+const usersSchema = require('../schemas/usersSchema');
 
 module.exports = [
     {
         method: 'POST',
         path: '/login',
         options:{
-            auth: false
+            auth: false,
+            validate: {
+                payload: usersSchema
+            }
         },
         handler: loginHandler.login
     }
