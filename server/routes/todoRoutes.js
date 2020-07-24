@@ -1,12 +1,18 @@
 'use strict';
 
 const todoHandler = require('../handlers/todoHandler')
+const todoSchema = require('../schemas/todoSchema');
 
 module.exports = [
     {
         method: 'PUT',
         path: '/todos',
-        handler: todoHandler.create
+        handler: todoHandler.create,
+        options: {
+            validate: {
+                payload: todoSchema
+            }
+        }
     },
     {
         method: 'GET',
@@ -16,7 +22,12 @@ module.exports = [
     {
         method: 'PATCH',
         path: '/todos/{id}',
-        handler: todoHandler.edit
+        handler: todoHandler.edit,
+        options: {
+            validate: {
+                payload: todoSchema
+            }
+        }
     },
     {
         method: 'DELETE',
