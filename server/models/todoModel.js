@@ -4,7 +4,7 @@ const { Model } = require('objection');
 
 class TodoModel extends Model {
     static get tableName() {
-        return 'todo';
+        return 'todos';
     }
 
     async $beforeUpdate(options, context) {

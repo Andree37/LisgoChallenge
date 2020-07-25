@@ -4,6 +4,8 @@ const env = require('../../envVariables.json');
 
 const name = 'jwt';
 const schema = 'jwt';
+
+
 const options = {
     key: env.JWT_KEY,
     validate: function (decoded, req, h) {

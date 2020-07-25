@@ -6,7 +6,7 @@ const hash = require('../utils/hash');
 const env = require('../envVariables.json');
 
 const login = async (name, surname, password) => {
-    const user = await Users.query().findOne({name:name, surname:surname});
+    const user = await Users.query().withGraphFetched('role').findOne({name:name, surname:surname});
 
     if(!user) {
         throw new Error("User not found");
@@ -21,8 +21,14 @@ const login = async (name, surname, password) => {
     const JWTData = {
         iss:'api',
         sub: user.id,
-        exp: Math.floor(Date.now() / 1000) + env.LOGIN_EXPIRATION_TIME
+        exp: Math.floor(Date.now() / 1000) + env.LOGIN_EXPIRATION_TIME,
+        data: {
+            user_id: user.id,
+            admin: user.role.type
+        }
     }
+
+    console.log(user.role);
 
     return Token.generate(JWTData);
 };
