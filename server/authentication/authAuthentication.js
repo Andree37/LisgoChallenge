@@ -26,7 +26,7 @@ const login = async (name, surname, password) => {
         exp: Math.floor(Date.now() / 1000) + env.LOGIN_EXPIRATION_TIME,
         data: {
             user_id: user.id,
-            admin: user.role.type
+            type: user.role.type
         }
     }
 
