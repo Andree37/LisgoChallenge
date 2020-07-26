@@ -5,8 +5,8 @@ const Todo = require('../models/todoModel');
 const create = async (request, h) => {
     // payload, json with description as string
     let data = request.payload;
-    //change this asdjahsdaskjdhauishaskdjhasduywaekjshdkawekasdmadhwaekuwyekajshjdwkaudwkahjdshawkudahdas <- to notice
-    data['user_id'] = "0cf25ddc-9669-43d7-a7c6-403c5bb77213";
+    let token = request.auth.credentials;
+    data['user_id'] = token.data.user_id;
     let inserted = await Todo.query()
         .insert(data)
         .returning('*');
@@ -17,15 +17,21 @@ const get = async (request, h) => {
     let filter = request.query.filter && request.query.filter !== 'ALL' ? request.query.filter : null;
     let orderBy = request.query.orderBy ? request.query.orderBy : 'DATE_ADDED';
 
+    let token = request.auth.credentials;
+    // get all or only his todos
+    let whereQuery = token.data.type === "admin" ? {}: {'user_id': token.data.user_id};
+
     let result;
     if (filter) {
+        whereQuery['state'] = filter.toLowerCase();
         result = await Todo.query()
             .withGraphFetched('creator')
-            .where('state', filter.toLowerCase())
+            .where(whereQuery)
             .orderBy(orderBy.toLowerCase());
     } else {
         result = await Todo.query()
             .withGraphFetched('creator')
+            .where(whereQuery)
             .orderBy(orderBy.toLowerCase());
     }
     return h.response(result);
@@ -34,6 +40,7 @@ const get = async (request, h) => {
 const edit = async (request, h) => {
     let id = request.params.id;
     let item = null;
+    let token = request.auth.credentials;
 
     // get the item, see if exists and is not complete
     try {
@@ -44,7 +51,12 @@ const edit = async (request, h) => {
         return h.response('404 not found').code(404);
     }
 
-    // if item doesn't exist or is complete
+    //if item isn't an user's task
+    if (token.data.user_id !== item.user_id) {
+        return h.response('No permissions to edit this todo').code(401);
+    }
+
+    // if item doesn't exist
     if (Array.isArray(item) && !item.length) {
         return h.response('404 not found').code(404);
     }
@@ -66,6 +78,25 @@ const edit = async (request, h) => {
 const remove = async (request, h) => {
     let id = request.params.id;
     let item = null;
+    let token = request.auth.credentials;
+
+    try {
+        item = await Todo.query()
+            .findById(id);
+    }
+    catch {
+        return h.response("id not uuid").code(404);
+    }
+
+    //if item isn't an user's task
+    if (token.data.user_id !== item.user_id) {
+        return h.response('No permissions to edit this todo').code(401);
+    }
+    // if item doesn't exist
+    if (Array.isArray(item) && !item.length) {
+        return h.response("id not existent").code(404);
+    }
+
     try {
         item = await Todo.query()
             .delete()
@@ -75,11 +106,7 @@ const remove = async (request, h) => {
         return h.response("id not uuid").code(404);
     }
 
-    if (Array.isArray(item) && !item.length) {
-        return h.response("id not existent").code(404);
-    } else {
-        return h.response("").code(200);
-    }
+    return h.response("").code(200);
 
 }
 

@@ -4,7 +4,7 @@ const { Model } = require('objection');
 
 class TodoModel extends Model {
     static get tableName() {
-        return 'todo';
+        return 'todos';
     }
 
     async $beforeUpdate(options, context) {
@@ -20,7 +20,7 @@ class TodoModel extends Model {
                 relation: Model.BelongsToOneRelation,
                 modelClass: UsersModel,
                 join: {
-                    from: 'todo.user_id',
+                    from: 'todos.user_id',
                     to: 'users.id'
                 }
             }

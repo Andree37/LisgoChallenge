@@ -16,6 +16,13 @@ const login = async (req, h) => {
 
 };
 
+const logout = async (req, h) => {
+    await authenticate.logout(req.auth.token);
+
+    return h.response("user logged out").code(200);
+}
+
 module.exports = {
     login,
+    logout,
 }
