@@ -1,6 +1,8 @@
 'use strict'
 
 const Users = require('../models/usersModel');
+const ExpiredTokens = require('../models/authTokenModel');
+
 const Token = require('./tokenAuthentication');
 const hash = require('../utils/hash');
 const env = require('../envVariables.json');
@@ -28,11 +30,14 @@ const login = async (name, surname, password) => {
         }
     }
 
-    console.log(user.role);
-
     return Token.generate(JWTData);
 };
 
+const logout = async (token) => {
+    const expiredToken = await ExpiredTokens.query().insert({token: token});
+}
+
 module.exports = {
     login,
+    logout,
 }

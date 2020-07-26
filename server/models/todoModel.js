@@ -20,7 +20,7 @@ class TodoModel extends Model {
                 relation: Model.BelongsToOneRelation,
                 modelClass: UsersModel,
                 join: {
-                    from: 'todo.user_id',
+                    from: 'todos.user_id',
                     to: 'users.id'
                 }
             }

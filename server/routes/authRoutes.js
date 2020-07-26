@@ -14,5 +14,10 @@ module.exports = [
             }
         },
         handler: loginHandler.login
+    },
+    {
+        method: 'POST',
+        path: '/logout',
+        handler: loginHandler.logout
     }
 ]
