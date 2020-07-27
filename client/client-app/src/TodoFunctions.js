@@ -5,18 +5,27 @@ export default function useTodoFunctions() {
     const { state, dispatch } = useContext(Store);
 
     function getTodos() {
-        fetch("http://localhost:3000/todos")
+        fetch("http://localhost:3000/todos", {
+            headers: {
+                'Authorization': state.authToken
+            }
+        })
             .then(res => res.json())
             .then((result) => {
-                return dispatch({
-                    type: 'FETCH_TODO',
-                    payload: result
-                });
+                if (Array.isArray(result)) {
+                    return dispatch({
+                        type: 'FETCH_TODO',
+                        payload: result
+                    });
+                }
             });
     }
 
     function deleteTodo(id) {
-        fetch(`http://localhost:3000/todos/${id}`, { method: 'DELETE' })
+        fetch(`http://localhost:3000/todos/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': state.authToken }
+        })
             .then(res => {
                 if (res.ok) {
                     let newTodos = state.todos.filter(t => {
@@ -31,14 +40,15 @@ export default function useTodoFunctions() {
                 }
             })
     }
-        
+
     function editTodo(id, changes) {
         let objTodo = JSON.stringify(changes);
         fetch(`http://localhost:3000/todos/${id}`, {
             method: 'PATCH',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': state.authToken
             },
             body: objTodo
         })
@@ -54,23 +64,22 @@ export default function useTodoFunctions() {
                                 }
                             });
                         });
-                        alert("Updated Task");
+                    alert("Updated Task");
                 }
                 else {
                     throw new Error("Task is already completed, cannot change description");
                 }
-            }).catch(err => {console.log(err.message)})
+            }).catch(err => { console.log(err.message) })
     }
 
     function createTodo(description) {
-        let objTodo = JSON.stringify({
-            description: description
-        });
+        let objTodo = JSON.stringify({ description });
         fetch('http://localhost:3000/todos', {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': state.authToken
             },
             body: objTodo
         })

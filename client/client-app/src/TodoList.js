@@ -14,10 +14,12 @@ export default function TodoList(props) {
 
     useEffect(() => {
         let arrTodos = state.todos;
-        setListTodos(arrTodos.map(todo => {
-            return <Todo state={todo} key={todo.s_id} />
-        }));
-    }, [state.todos]);
+        if (Array.isArray(arrTodos)) {
+            setListTodos(arrTodos.map(todo => {
+                return <Todo state={todo} key={todo.s_id} />
+            }));
+        }
+    }, [state.todos, state.authToken]);
 
     function handleNewTaskName(e) {
         setNewTaskName(e.target.value);
