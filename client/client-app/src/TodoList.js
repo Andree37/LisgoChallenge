@@ -5,7 +5,7 @@ import { Store } from './Store'
 import useTodoFunctions from './TodoFunctions'
 
 export default function TodoList(props) {
-    const { state, dispatch } = useContext(Store);
+    const { state } = useContext(Store);
     const todoFunctions = useTodoFunctions();
 
     const [newTaskName, setNewTaskName] = useState('');
@@ -14,54 +14,51 @@ export default function TodoList(props) {
     const [currentRepresentation, setCurrentRepresentation] = useState(0);
     const [order, setOrder] = useState('Date');
 
+    // create memos for filter and order
+    // list desc Todos
     const sortedDescTodos = useMemo(() => {
-        let arrTodos = state.todos.slice();
-        arrTodos.sort((a, b) => {
-            return a.description < b.description ? -1 : a.description === b.description ? 0 : 1;
-        });
-        return arrTodos;
+        return createSortedListMemo((a, b) => (
+            a.description < b.description ? -1 : a.description === b.description ? 0 : 1
+        ), state.todos);
     }, [state.todos]);
 
+    // list asc Todos
     const sortedAscTodos = useMemo(() => {
-        let arrTodos = state.todos.slice();
-        arrTodos.sort((a, b) => {
-            return a.description < b.description ? 1 : a.description === b.description ? 0 : -1;
-        });
-        return arrTodos;
+        return createSortedListMemo((a, b) => (
+            a.description < b.description ? 1 : a.description === b.description ? 0 : -1
+        ), state.todos);
     }, [state.todos]);
 
+    // list date_added Todos
     const sortedDateTodos = useMemo(() => {
-        let arrTodos = state.todos.slice();
-        arrTodos.sort((a, b) => {
-            return Date.parse(a.date_added) - Date.parse(b.date_added);
-        });
-        return arrTodos;
+        return createSortedListMemo((a, b) => (
+            Date.parse(a.date_added) - Date.parse(b.date_added)
+        ), state.todos);
     }, [state.todos]);
 
-    // control the rotation of the sort
-    let sortedArray = []
-    sortedArray.push(sortedDateTodos, sortedDescTodos, sortedAscTodos);
-    let orders = ['Date', 'A-Z', 'Z-A'];
+    // wrapper function to filter out the incomplete todos
+    function hideCompletedList(todoList) {
+        return todoList.filter(todo => (todo.state === 'INCOMPLETE'));
+    }
 
     useEffect(() => {
-        let arrTodos = state.todos.slice();
-        if (Array.isArray(arrTodos)) {
-            setListTodos(arrTodos.map(todo => {
-                return <Todo state={todo} key={todo.s_id} />
-            }));
+        // control the rotation of the sort
+        let sortedArray = [sortedDateTodos, sortedDescTodos, sortedAscTodos]
+        let orders = ['Date', 'A-Z', 'Z-A'];
+        // represent the todos in defined order
+        setOrder(orders[currentRepresentation]);
+        // represent hidden with filter wrapper
+        if (!hideCompleted) {
+            setListTodos(sortedArray[currentRepresentation]);
         }
-    }, [state.todos]);
+        else {
+            setListTodos(hideCompletedList(sortedArray[currentRepresentation]));
+        }
+    }, [state.todos, currentRepresentation, hideCompleted, sortedDateTodos, sortedDescTodos, sortedAscTodos]);
 
-    function toggleTodoList() {
+    function handleToggleTodoList() {
         let representation = (currentRepresentation + 1) % 3
         setCurrentRepresentation(representation);
-
-        setOrder(orders[representation]);
-
-        dispatch({
-            type: 'FETCH_TODO',
-            payload: sortedArray[representation]
-        });
     }
 
     function handleNewTaskName(e) {
@@ -70,6 +67,9 @@ export default function TodoList(props) {
 
     function handleCreateTask(e) {
         todoFunctions.create(newTaskName);
+
+        // change back to default
+        setNewTaskName("");
     }
 
     function handleHideCompleted(e) {
@@ -95,22 +95,30 @@ export default function TodoList(props) {
             <button
                 type="button"
                 className="link-button"
-                onClick={() => toggleTodoList()}>
+                onClick={() => handleToggleTodoList()}>
                 Tasks / {order}
             </button>
             <hr />
             <div>
-                {listTodos}
+                {listTodos.map(todo => {
+                    return <Todo state={todo} key={todo.s_id} />
+                })}
             </div>
             <div className="complete">
                 <label className="completeLabel">Hide completed</label>
                 <input
                     className="checkboxInput"
                     type="checkbox"
-                    defaultChecked={hideCompleted}
+                    checked={hideCompleted}
                     onChange={handleHideCompleted}
                 />
             </div>
         </section>
     );
+}
+
+function createSortedListMemo(sortFunction, listToSort) {
+    let arrTodos = listToSort.slice();
+    arrTodos.sort(sortFunction);
+    return arrTodos;
 }
