@@ -97,7 +97,7 @@ const remove = async (request, h) => {
     }
 
     try {
-        item = await Todo.query()
+        await Todo.query()
             .delete()
             .where({id: id})
             .returning('*');

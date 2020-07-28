@@ -3,7 +3,8 @@ import React, { useReducer } from 'react'
 export const Store = React.createContext();
 
 const initialState = {
-    todos: []
+    todos: [],
+    authToken: null
 }
 
 function reducer(state, action) {
@@ -17,6 +18,8 @@ function reducer(state, action) {
             return { ...state, todos: action.payload };
         case 'ADD_TODO':
             return { ...state, todos: [...state.todos, action.payload] }
+        case 'LOGIN':
+            return { ...state, authToken: action.payload };
         default:
             return state;
     }

@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useMemo } from 'react';
 import Todo from './Todo'
 import './TodoList.css'
 import { Store } from './Store'
@@ -11,13 +11,55 @@ export default function TodoList(props) {
     const [newTaskName, setNewTaskName] = useState('');
     const [hideCompleted, setHideCompleted] = useState(false);
     const [listTodos, setListTodos] = useState([]);
+    const [currentRepresentation, setCurrentRepresentation] = useState(0);
+    const [order, setOrder] = useState('Date');
+
+    // create memos for filter and order
+    // list desc Todos
+    const sortedDescTodos = useMemo(() => {
+        return createSortedListMemo((a, b) => (
+            a.description < b.description ? -1 : a.description === b.description ? 0 : 1
+        ), state.todos);
+    }, [state.todos]);
+
+    // list asc Todos
+    const sortedAscTodos = useMemo(() => {
+        return createSortedListMemo((a, b) => (
+            a.description < b.description ? 1 : a.description === b.description ? 0 : -1
+        ), state.todos);
+    }, [state.todos]);
+
+    // list date_added Todos
+    const sortedDateTodos = useMemo(() => {
+        return createSortedListMemo((a, b) => (
+            Date.parse(a.date_added) - Date.parse(b.date_added)
+        ), state.todos);
+    }, [state.todos]);
+
+    // wrapper function to filter out the incomplete todos
+    function hideCompletedList(todoList) {
+        return todoList.filter(todo => (todo.state === 'INCOMPLETE'));
+    }
 
     useEffect(() => {
-        let arrTodos = state.todos;
-        setListTodos(arrTodos.map(todo => {
-            return <Todo state={todo} key={todo.s_id} />
-        }));
-    }, [state.todos]);
+        // control the rotation of the sort
+        let sortedArray = [sortedDateTodos, sortedDescTodos, sortedAscTodos]
+        let orders = ['Date', 'A-Z', 'Z-A'];
+        // represent the todos in defined order
+        setOrder(orders[currentRepresentation]);
+        // represent hidden with filter wrapper
+        if (!hideCompleted) {
+            setListTodos(sortedArray[currentRepresentation]);
+        }
+        else {
+            setListTodos(hideCompletedList(sortedArray[currentRepresentation]));
+        }
+    }, [state.todos, currentRepresentation, hideCompleted, sortedDateTodos, sortedDescTodos, sortedAscTodos]);
+
+    function handleToggleTodoList() {
+        let representation = (currentRepresentation + 1) % 3
+        setCurrentRepresentation(representation);
+    }
 
     function handleNewTaskName(e) {
         setNewTaskName(e.target.value);
@@ -25,6 +67,9 @@ export default function TodoList(props) {
 
     function handleCreateTask(e) {
         todoFunctions.create(newTaskName);
+
+        // change back to default
+        setNewTaskName("");
     }
 
     function handleHideCompleted(e) {
@@ -47,20 +92,33 @@ export default function TodoList(props) {
                     Create
                 </button>
             </div>
-            <label>Tasks</label>
+            <button
+                type="button"
+                className="link-button"
+                onClick={() => handleToggleTodoList()}>
+                Tasks / {order}
+            </button>
             <hr />
             <div>
-                {listTodos}
+                {listTodos.map(todo => {
+                    return <Todo state={todo} key={todo.s_id} />
+                })}
             </div>
             <div className="complete">
                 <label className="completeLabel">Hide completed</label>
                 <input
                     className="checkboxInput"
                     type="checkbox"
-                    defaultChecked={hideCompleted}
+                    checked={hideCompleted}
                     onChange={handleHideCompleted}
                 />
             </div>
         </section>
     );
+}
+
+function createSortedListMemo(sortFunction, listToSort) {
+    let arrTodos = listToSort.slice();
+    arrTodos.sort(sortFunction);
+    return arrTodos;
 }
