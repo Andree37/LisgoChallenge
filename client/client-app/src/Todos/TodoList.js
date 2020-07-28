@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect, useMemo } from 'react';
 import Todo from './Todo'
 import './TodoList.css'
-import { Store } from './Store'
+import { Store } from '../Store/Store'
 import useTodoFunctions from './TodoFunctions'
 
 export default function TodoList(props) {
@@ -17,41 +17,24 @@ export default function TodoList(props) {
     // create memos for filter and order
     // list desc Todos
     const sortedDescTodos = useMemo(() => {
-        let sortedList = createSortedListMemo((a, b) => (
+        return createSortedListMemo((a, b) => (
             a.description < b.description ? -1 : a.description === b.description ? 0 : 1
-        ), state.todos);
-        if(hideCompleted) {
-            return hideCompletedList(sortedList);
-        }
-        return sortedList;
+        ), state.todos, hideCompleted);
     }, [state.todos, hideCompleted]);
 
     // list asc Todos
     const sortedAscTodos = useMemo(() => {
-        let sortedList = createSortedListMemo((a, b) => (
+        return createSortedListMemo((a, b) => (
             a.description < b.description ? 1 : a.description === b.description ? 0 : -1
-        ), state.todos);
-        if(hideCompleted) {
-            return hideCompletedList(sortedList);
-        }
-        return sortedList;
+        ), state.todos, hideCompleted);
     }, [state.todos, hideCompleted]);
 
     // list date_added Todos
     const sortedDateTodos = useMemo(() => {
-        let sortedList = createSortedListMemo((a, b) => (
+        return createSortedListMemo((a, b) => (
             Date.parse(a.date_added) - Date.parse(b.date_added)
-        ), state.todos);
-        if(hideCompleted) {
-            return hideCompletedList(sortedList);
-        }
-        return sortedList;
+        ), state.todos, hideCompleted);
     }, [state.todos, hideCompleted]);
-
-    // wrapper function to filter out the incomplete todos
-    function hideCompletedList(todoList) {
-        return todoList.filter(todo => (todo.state === 'INCOMPLETE'));
-    }
 
     useEffect(() => {
         // control the rotation of the sort
@@ -124,8 +107,14 @@ export default function TodoList(props) {
     );
 }
 
-function createSortedListMemo(sortFunction, listToSort) {
+// create memo list with filter
+function createSortedListMemo(sortFunction, listToSort, hideCompleted) {
     let arrTodos = listToSort.slice();
     arrTodos.sort(sortFunction);
-    return arrTodos;
+    return hideCompleted ? hideCompletedList(arrTodos) : arrTodos;
+}
+
+// wrapper function to filter out the incomplete todos
+function hideCompletedList(todoList) {
+    return todoList.filter(todo => (todo.state === 'INCOMPLETE'));
 }

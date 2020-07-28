@@ -19,16 +19,16 @@ export default function Todo(props) {
         todoFunctions.edit(props.state.id, { state });
     }
 
+    //change the description of the todo when clicked on edit button
     function changeDescription() {
-        if(!isComplete) {
+        if (!isComplete) {
             todoFunctions.edit(props.state.id, { description });
         }
         else {
             alert("Cannot change description of a completed task, remove completion first")
         }
-        
     }
-
+    
     return (
         <section className="line">
             <input

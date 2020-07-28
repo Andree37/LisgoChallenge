@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { Store } from './Store'
+import { Store } from '../Store/Store'
 
 export default function useTodoFunctions() {
     const { state, dispatch } = useContext(Store);

@@ -1,14 +1,14 @@
 import React, { useEffect, useContext } from 'react';
-import TodoList from './TodoList'
-import { Store } from './Store';
-import useTodoFunctions from './TodoFunctions';
-import LoginForm from './LoginForm';
+import TodoList from './Todos/TodoList'
+import { Store } from './Store/Store';
+import useTodoFunctions from './Todos/TodoFunctions';
+import LoginForm from './Auth/LoginForm';
 
 function App() {
   const { state } = useContext(Store);
   const todoFunctions = useTodoFunctions();
 
-  //get todos after app is mounted
+  //get todos after app is mounted and if the authtoken is present
   useEffect(() => {
     state.todos.length === 0 && state.authToken && todoFunctions.get();
   }, [state.todos, state.authToken, todoFunctions]);
