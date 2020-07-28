@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { Store } from './Store'
 
 export default function useAuthFunctions() {
-    const { state, dispatch } = useContext(Store);
+    const { dispatch } = useContext(Store);
 
     function login(name, surname, password) {
         let objTodo = JSON.stringify({ name, surname, password });

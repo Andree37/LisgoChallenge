@@ -1,13 +1,10 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import useAuthFunctions from './AuthFunctions';
-import { Store } from './Store'
 
 export default function LoginForm(props) {
     const [name, setName] = useState("");
     const [surname, setSurname] = useState("");
     const [password, setPassword] = useState("");
-
-    const { state, dispatch } = useContext(Store);
 
     const authFunctions = useAuthFunctions();
 
@@ -24,9 +21,7 @@ export default function LoginForm(props) {
     }
 
     function handleSubmit(e) {
-        
         authFunctions.login(name, surname, password);
-        console.log(state);
         e.preventDefault();
     }
 

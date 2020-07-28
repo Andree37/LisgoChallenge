@@ -5,7 +5,7 @@ export default function useTodoFunctions() {
     const { state, dispatch } = useContext(Store);
 
     function getTodos() {
-        fetch("http://localhost:3000/todos", {
+        fetch("http://localhost:3000/todos?orderBy=DATE_ADDED", {
             headers: {
                 'Authorization': state.authToken
             }

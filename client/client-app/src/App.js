@@ -10,8 +10,8 @@ function App() {
 
   //get todos after app is mounted
   useEffect(() => {
-    state.todos.length === 0 && todoFunctions.get();
-  }, [state.authToken]);
+    state.todos.length === 0 && state.authToken && todoFunctions.get();
+  }, [state.todos, state.authToken, todoFunctions]);
 
   return (
     <div>
