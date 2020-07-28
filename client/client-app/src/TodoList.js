@@ -17,24 +17,36 @@ export default function TodoList(props) {
     // create memos for filter and order
     // list desc Todos
     const sortedDescTodos = useMemo(() => {
-        return createSortedListMemo((a, b) => (
+        let sortedList = createSortedListMemo((a, b) => (
             a.description < b.description ? -1 : a.description === b.description ? 0 : 1
         ), state.todos);
-    }, [state.todos]);
+        if(hideCompleted) {
+            return hideCompletedList(sortedList);
+        }
+        return sortedList;
+    }, [state.todos, hideCompleted]);
 
     // list asc Todos
     const sortedAscTodos = useMemo(() => {
-        return createSortedListMemo((a, b) => (
+        let sortedList = createSortedListMemo((a, b) => (
             a.description < b.description ? 1 : a.description === b.description ? 0 : -1
         ), state.todos);
-    }, [state.todos]);
+        if(hideCompleted) {
+            return hideCompletedList(sortedList);
+        }
+        return sortedList;
+    }, [state.todos, hideCompleted]);
 
     // list date_added Todos
     const sortedDateTodos = useMemo(() => {
-        return createSortedListMemo((a, b) => (
+        let sortedList = createSortedListMemo((a, b) => (
             Date.parse(a.date_added) - Date.parse(b.date_added)
         ), state.todos);
-    }, [state.todos]);
+        if(hideCompleted) {
+            return hideCompletedList(sortedList);
+        }
+        return sortedList;
+    }, [state.todos, hideCompleted]);
 
     // wrapper function to filter out the incomplete todos
     function hideCompletedList(todoList) {
@@ -48,12 +60,7 @@ export default function TodoList(props) {
         // represent the todos in defined order
         setOrder(orders[currentRepresentation]);
         // represent hidden with filter wrapper
-        if (!hideCompleted) {
-            setListTodos(sortedArray[currentRepresentation]);
-        }
-        else {
-            setListTodos(hideCompletedList(sortedArray[currentRepresentation]));
-        }
+        setListTodos(sortedArray[currentRepresentation]);
     }, [state.todos, currentRepresentation, hideCompleted, sortedDateTodos, sortedDescTodos, sortedAscTodos]);
 
     function handleToggleTodoList() {

@@ -57,11 +57,17 @@ export default function useTodoFunctions() {
                     res.json()
                         .then(result => {
                             // probably a better way of doing this, making it O(1) need to think more, maybe getting it from the key on the array?
-                            state.todos.forEach(t => {
+                            let copyTodos = state.todos.slice();
+                            copyTodos.forEach(t => {
                                 if (t.id === id) {
                                     t.description = result.description;
                                     t.state = result.state;
                                 }
+                            });
+
+                            return dispatch({
+                                type: 'EDIT_TODO',
+                                payload: copyTodos
                             });
                         });
                     alert("Updated Task");
