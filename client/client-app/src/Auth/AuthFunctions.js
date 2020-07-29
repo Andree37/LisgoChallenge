@@ -4,24 +4,23 @@ import { Store } from '../Store/Store'
 export default function useAuthFunctions() {
     const { dispatch } = useContext(Store);
 
-    function login(name, surname, password) {
+    async function login(name, surname, password) {
         let objTodo = JSON.stringify({ name, surname, password });
 
-        fetch('http://localhost:3000/login', {
+        let response = await fetch('http://localhost:3000/login', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
             body: objTodo
-        })
-            .then(res => res.json())
-            .then((result) => {
-                return dispatch({
-                    type: 'LOGIN',
-                    payload: result.token
-                });
-            });
+        });
+        let data = await response.json();
+        dispatch({
+            type: 'LOGIN',
+            payload: data.token
+        });
+        return data;
     }
 
     return {

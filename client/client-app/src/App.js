@@ -1,6 +1,7 @@
 import React, { useEffect, useContext } from 'react';
-import TodoList from './Todos/TodoList'
+import { Switch, Route, BrowserRouter as Router } from 'react-router-dom';
 import { Store } from './Store/Store';
+import TodoList from './Todos/TodoList'
 import useTodoFunctions from './Todos/TodoFunctions';
 import LoginForm from './Auth/LoginForm';
 
@@ -14,14 +15,12 @@ function App() {
   }, [state.todos, state.authToken, todoFunctions]);
 
   return (
-    <div>
-      <div>
-        <TodoList />
-      </div>
-      <div>
-        <LoginForm />
-      </div>
-    </div>
+    <Router>
+      <Switch>
+        <Route path="/login" component={LoginForm} />
+        <Route path="/" component={TodoList} />
+      </Switch>
+    </Router>
   );
 }
 

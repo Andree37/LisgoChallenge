@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import useAuthFunctions from './AuthFunctions';
+import './LoginForm.css'
 
 export default function LoginForm(props) {
     const [name, setName] = useState("");
@@ -8,38 +9,47 @@ export default function LoginForm(props) {
 
     const authFunctions = useAuthFunctions();
 
-    function handleNameChange (e) {
+    function handleNameChange(e) {
         setName(e.target.value);
     }
 
-    function handleSurnameChange (e) {
+    function handleSurnameChange(e) {
         setSurname(e.target.value);
     }
 
-    function handlePasswordChange (e) {
+    function handlePasswordChange(e) {
         setPassword(e.target.value);
     }
 
-    function handleSubmit(e) {
-        authFunctions.login(name, surname, password);
+    async function handleSubmit(e) {
+        const { history } = props;
         e.preventDefault();
+        try {
+            let result = await authFunctions.login(name, surname, password);
+
+            // user is authenticated with the token
+            if (result.token) {
+                history.push('/users');
+            }
+            else {
+                alert("Something went wrong...")
+            }
+        }
+        catch (err) {
+            alert("User or password is incorrect...")
+        }
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <label>
-                Name:
-    <input type="text" name="name" onChange={handleNameChange} />
-            </label>
-            <label>
-                Surname:
-    <input type="text" name="surname" onChange={handleSurnameChange} />
-            </label>
-            <label>
-                Password:
-    <input type="password" name="password" onChange={handlePasswordChange} />
-            </label>
-            <input type="submit" value="Submit" />
-        </form>
+        <div className="login-page">
+            <div className="form">
+                <form className="login-form" onSubmit={handleSubmit}>
+                    <input type="text" placeholder="name" onChange={handleNameChange} value={name} required />
+                    <input type="text" placeholder="surname" onChange={handleSurnameChange} value={surname} required />
+                    <input type="password" placeholder="password" onChange={handlePasswordChange} value={password} required />
+                    <input className="submit" type="submit" value="Submit" />
+                </form>
+            </div>
+        </div>
     );
 }
