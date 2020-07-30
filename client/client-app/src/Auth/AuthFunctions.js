@@ -15,26 +15,33 @@ export default function useAuthFunctions() {
             },
             body: objTodo
         });
-        let data = await response.json();
-        dispatch({
-            type: 'LOGIN',
-            payload: data.token
-        });
-        return data;
+        if (response.ok) {
+            let data = await response.json();
+            dispatch({
+                type: 'LOGIN',
+                payload: data.token
+            });
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     async function logout() {
-        let response = undefined;
         if (state.authToken) {
-            response = await fetch('http://localhost:3000/logout', {
+            await fetch('http://localhost:3000/logout', {
                 method: 'POST',
                 headers: { 'Authorization': state.authToken }
             });
+            dispatch({
+                type: 'LOGOUT'
+            });
+            return true;
         }
-        dispatch({
-            type: 'LOGOUT'
-        });
-        return response;
+        else {
+            return false;
+        }
     }
 
     function isLogged() {

@@ -25,14 +25,14 @@ export default function LoginForm(props) {
         const { history } = props;
         e.preventDefault();
         try {
-            let result = await authFunctions.login(name, surname, password);
+            let success = await authFunctions.login(name, surname, password);
 
             // user is authenticated with the token
-            if (result.token) {
+            if (success) {
                 history.push('/users');
             }
             else {
-                alert("Something went wrong...")
+                alert("")
             }
         }
         catch (err) {

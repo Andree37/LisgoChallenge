@@ -4,44 +4,45 @@ import { Store } from '../Store/Store'
 export default function useTodoFunctions() {
     const { state, dispatch } = useContext(Store);
 
-    function getTodos() {
-        fetch("http://localhost:3000/todos?orderBy=DATE_ADDED", {
+    async function getTodos() {
+        let response = await fetch("http://localhost:3000/todos?orderBy=DATE_ADDED", {
             headers: { 'Authorization': state.authToken }
-        })
-            .then(res => res.json())
-            .then((result) => {
-                if (Array.isArray(result)) {
-                    return dispatch({
-                        type: 'FETCH_TODO',
-                        payload: result
-                    });
-                }
+        });
+        let data = await response.json();
+        if (Array.isArray(data)) {
+            dispatch({
+                type: 'FETCH_TODO',
+                payload: data
             });
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
-    function deleteTodo(id) {
-        fetch(`http://localhost:3000/todos/${id}`, {
+    async function deleteTodo(id) {
+        let response = await fetch(`http://localhost:3000/todos/${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': state.authToken }
-        })
-            .then(res => {
-                if (res.ok) {
-                    let newTodos = state.todos.filter(t => {
-                        return t.id !== id;
-                    })
-                    return dispatch({
-                        type: 'DELETE_TODO',
-                        payload: newTodos
-                    });
-                } else {
-                    console.log("Did not delete");
-                }
+        });
+        if (response.ok) {
+            let newTodos = state.todos.filter(t => {
+                return t.id !== id;
             })
+            dispatch({
+                type: 'DELETE_TODO',
+                payload: newTodos
+            });
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    function editTodo(id, changes) {
+    async function editTodo(id, changes) {
         let objTodo = JSON.stringify(changes);
-        fetch(`http://localhost:3000/todos/${id}`, {
+        let response = await fetch(`http://localhost:3000/todos/${id}`, {
             method: 'PATCH',
             headers: {
                 'Accept': 'application/json',
@@ -49,36 +50,31 @@ export default function useTodoFunctions() {
                 'Authorization': state.authToken
             },
             body: objTodo
-        })
-            .then(res => {
-                if (res.ok) {
-                    res.json()
-                        .then(result => {
-                            // probably a better way of doing this, making it O(1) need to think more, maybe getting it from the key on the array?
-                            let copyTodos = state.todos.slice();
-                            copyTodos.forEach(t => {
-                                if (t.id === id) {
-                                    t.description = result.description;
-                                    t.state = result.state;
-                                }
-                            });
-
-                            return dispatch({
-                                type: 'EDIT_TODO',
-                                payload: copyTodos
-                            });
-                        });
-                    alert("Updated Task");
+        });
+        if (response.ok) {
+            let data = await response.json();
+            // probably a better way of doing this, making it O(1) need to think more, maybe getting it from the key on the array?
+            let copyTodos = state.todos.slice();
+            copyTodos.forEach(t => {
+                if (t.id === id) {
+                    t.description = data.description;
+                    t.state = data.state;
                 }
-                else {
-                    throw new Error("Task is already completed, cannot change description");
-                }
-            }).catch(err => { console.log(err.message) })
+            });
+            dispatch({
+                type: 'EDIT_TODO',
+                payload: copyTodos
+            });
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
-    function createTodo(description) {
+    async function createTodo(description) {
         let objTodo = JSON.stringify({ description });
-        fetch('http://localhost:3000/todos', {
+        let response = await fetch('http://localhost:3000/todos', {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
@@ -86,20 +82,18 @@ export default function useTodoFunctions() {
                 'Authorization': state.authToken
             },
             body: objTodo
-        })
-            .then(res => {
-                if (res.ok) {
-                    res.json()
-                        .then(result => {
-                            return dispatch({
-                                type: 'ADD_TODO',
-                                payload: result
-                            });
-                        });
-                } else {
-                    console.log("Did not create");
-                }
-            })
+        });
+        if (response.ok) {
+            let data = await response.json();
+            dispatch({
+                type: 'ADD_TODO',
+                payload: data
+            });
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     return {

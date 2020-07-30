@@ -58,8 +58,8 @@ export default function TodoList(props) {
         setNewTaskName(e.target.value);
     }
 
-    function handleCreateTask(e) {
-        todoFunctions.create(newTaskName);
+    async function handleCreateTask(e) {
+        await todoFunctions.create(newTaskName);
 
         // change back to default
         setNewTaskName("");
@@ -69,15 +69,16 @@ export default function TodoList(props) {
         setHideCompleted(!hideCompleted);
     }
 
-    function handleLogout(e) {
-        authFunctions.logout();
-
-        const { history } = props;
-        history.push("/login");
+    async function handleLogout(e) {
+        let success = await authFunctions.logout();
+        if (success) {
+            const { history } = props;
+            history.push("/login");
+        }
     }
 
-    if(!authFunctions.isLogged()) {
-        return <Redirect to="/login"/>
+    if (!authFunctions.isLogged()) {
+        return <Redirect to="/login" />
     }
 
     return (

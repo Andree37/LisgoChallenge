@@ -1,34 +1,63 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Todo.css';
 import useTodoFunctions from './TodoFunctions'
 
 export default function Todo(props) {
     const [description, setDescription] = useState(props.state.description);
     const [isComplete, setIsComplete] = useState(props.state.state === "COMPLETE");
+    const acceptedDescription = props.state.description;
 
     const todoFunctions = useTodoFunctions();
+    const descriptionInput = useRef(null);
+    const timeout = useRef(null);
+
+    useEffect(() => {
+        descriptionInput.current.addEventListener('keyup', function (e) {
+            clearTimeout(timeout.current);
+
+            timeout.current = setTimeout(function () {
+                autoSave();
+            }, 1000);
+        });
+    });
 
     function handleDescriptionChange(e) {
         setDescription(e.target.value);
     }
 
-    function handleIsCompleteChange(e) {
+    async function handleIsCompleteChange(e) {
         setIsComplete(!isComplete);
         //change state
         let state = !isComplete ? "COMPLETE" : "INCOMPLETE";
-        todoFunctions.edit(props.state.id, { state });
+        await todoFunctions.edit(props.state.id, { state });
     }
 
     //change the description of the todo when clicked on edit button
-    function changeDescription() {
-        if (!isComplete) {
-            todoFunctions.edit(props.state.id, { description });
+    async function changeDescription() {
+        let success = await todoFunctions.edit(props.state.id, { description });
+        if (success) {
+            alert("Task Updated!");
         }
         else {
-            alert("Cannot change description of a completed task, remove completion first")
+            // if something wrong happens, change description back to what it was
+            setDescription(acceptedDescription);
+            alert("Task cannot be updated, it's already completed");
         }
     }
-    
+
+    async function handleDelete() {
+        await todoFunctions.delete(props.state.id)
+    }
+
+    async function autoSave() {
+        let success = await todoFunctions.edit(props.state.id, { description });
+        if (!success) {
+            // if something wrong happens, change description back to what it was
+            setDescription(acceptedDescription);
+            alert("Task cannot be updated, it's already completed");
+        }
+    }
+
     return (
         <section className="line">
             <input
@@ -38,6 +67,7 @@ export default function Todo(props) {
                 onChange={handleIsCompleteChange}
             />
             <input
+                ref={descriptionInput}
                 className="tasks"
                 type="text"
                 value={description}
@@ -53,7 +83,7 @@ export default function Todo(props) {
             <button
                 type="button"
                 className="link-button"
-                onClick={() => todoFunctions.delete(props.state.id)}>
+                onClick={() => handleDelete()}>
                 Delete
             </button>
         </section>
