@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import useAuthFunctions from './AuthFunctions';
-import './LoginForm.css'
+import './LoginForm.css';
 
 export default function LoginForm(props) {
     const [name, setName] = useState("");

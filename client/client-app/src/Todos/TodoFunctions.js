@@ -6,9 +6,7 @@ export default function useTodoFunctions() {
 
     function getTodos() {
         fetch("http://localhost:3000/todos?orderBy=DATE_ADDED", {
-            headers: {
-                'Authorization': state.authToken
-            }
+            headers: { 'Authorization': state.authToken }
         })
             .then(res => res.json())
             .then((result) => {

@@ -3,6 +3,8 @@ import Todo from './Todo'
 import './TodoList.css'
 import { Store } from '../Store/Store'
 import useTodoFunctions from './TodoFunctions'
+import useAuthFunctions from '../Auth/AuthFunctions';
+import { Redirect } from 'react-router-dom';
 
 export default function TodoList(props) {
     const { state } = useContext(Store);
@@ -13,6 +15,7 @@ export default function TodoList(props) {
     const [listTodos, setListTodos] = useState([]);
     const [currentRepresentation, setCurrentRepresentation] = useState(0);
     const [order, setOrder] = useState('Date');
+    const authFunctions = useAuthFunctions();
 
     // create memos for filter and order
     // list desc Todos
@@ -66,6 +69,17 @@ export default function TodoList(props) {
         setHideCompleted(!hideCompleted);
     }
 
+    function handleLogout(e) {
+        authFunctions.logout();
+
+        const { history } = props;
+        history.push("/login");
+    }
+
+    if(!authFunctions.isLogged()) {
+        return <Redirect to="/login"/>
+    }
+
     return (
         <section className="container">
             <div className="header">
@@ -103,6 +117,7 @@ export default function TodoList(props) {
                     onChange={handleHideCompleted}
                 />
             </div>
+            <button onClick={() => handleLogout()}>CLICK MEEE</button>
         </section>
     );
 }

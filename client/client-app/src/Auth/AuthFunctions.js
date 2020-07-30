@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { Store } from '../Store/Store'
 
 export default function useAuthFunctions() {
-    const { dispatch } = useContext(Store);
+    const { state, dispatch } = useContext(Store);
 
     async function login(name, surname, password) {
         let objTodo = JSON.stringify({ name, surname, password });
@@ -23,7 +23,27 @@ export default function useAuthFunctions() {
         return data;
     }
 
+    async function logout() {
+        let response = undefined;
+        if (state.authToken) {
+            response = await fetch('http://localhost:3000/logout', {
+                method: 'POST',
+                headers: { 'Authorization': state.authToken }
+            });
+        }
+        dispatch({
+            type: 'LOGOUT'
+        });
+        return response;
+    }
+
+    function isLogged() {
+        return state.authToken !== null
+    }
+
     return {
         login,
+        logout,
+        isLogged,
     }
 }
