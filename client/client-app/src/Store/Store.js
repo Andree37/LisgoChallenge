@@ -20,6 +20,8 @@ function reducer(state, action) {
             return { ...state, todos: [...state.todos, action.payload] }
         case 'LOGIN':
             return { ...state, authToken: action.payload };
+        case 'LOGOUT':
+            return { ...state, authToken: null };
         default:
             return state;
     }

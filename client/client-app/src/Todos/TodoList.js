@@ -1,8 +1,10 @@
 import React, { useState, useContext, useEffect, useMemo } from 'react';
 import Todo from './Todo'
 import './TodoList.css'
-import { Store } from './Store'
+import { Store } from '../Store/Store'
 import useTodoFunctions from './TodoFunctions'
+import useAuthFunctions from '../Auth/AuthFunctions';
+import { Redirect } from 'react-router-dom';
 
 export default function TodoList(props) {
     const { state } = useContext(Store);
@@ -13,33 +15,29 @@ export default function TodoList(props) {
     const [listTodos, setListTodos] = useState([]);
     const [currentRepresentation, setCurrentRepresentation] = useState(0);
     const [order, setOrder] = useState('Date');
+    const authFunctions = useAuthFunctions();
 
     // create memos for filter and order
     // list desc Todos
     const sortedDescTodos = useMemo(() => {
         return createSortedListMemo((a, b) => (
             a.description < b.description ? -1 : a.description === b.description ? 0 : 1
-        ), state.todos);
-    }, [state.todos]);
+        ), state.todos, hideCompleted);
+    }, [state.todos, hideCompleted]);
 
     // list asc Todos
     const sortedAscTodos = useMemo(() => {
         return createSortedListMemo((a, b) => (
             a.description < b.description ? 1 : a.description === b.description ? 0 : -1
-        ), state.todos);
-    }, [state.todos]);
+        ), state.todos, hideCompleted);
+    }, [state.todos, hideCompleted]);
 
     // list date_added Todos
     const sortedDateTodos = useMemo(() => {
         return createSortedListMemo((a, b) => (
             Date.parse(a.date_added) - Date.parse(b.date_added)
-        ), state.todos);
-    }, [state.todos]);
-
-    // wrapper function to filter out the incomplete todos
-    function hideCompletedList(todoList) {
-        return todoList.filter(todo => (todo.state === 'INCOMPLETE'));
-    }
+        ), state.todos, hideCompleted);
+    }, [state.todos, hideCompleted]);
 
     useEffect(() => {
         // control the rotation of the sort
@@ -48,12 +46,7 @@ export default function TodoList(props) {
         // represent the todos in defined order
         setOrder(orders[currentRepresentation]);
         // represent hidden with filter wrapper
-        if (!hideCompleted) {
-            setListTodos(sortedArray[currentRepresentation]);
-        }
-        else {
-            setListTodos(hideCompletedList(sortedArray[currentRepresentation]));
-        }
+        setListTodos(sortedArray[currentRepresentation]);
     }, [state.todos, currentRepresentation, hideCompleted, sortedDateTodos, sortedDescTodos, sortedAscTodos]);
 
     function handleToggleTodoList() {
@@ -65,8 +58,8 @@ export default function TodoList(props) {
         setNewTaskName(e.target.value);
     }
 
-    function handleCreateTask(e) {
-        todoFunctions.create(newTaskName);
+    async function handleCreateTask(e) {
+        await todoFunctions.create(newTaskName);
 
         // change back to default
         setNewTaskName("");
@@ -74,6 +67,18 @@ export default function TodoList(props) {
 
     function handleHideCompleted(e) {
         setHideCompleted(!hideCompleted);
+    }
+
+    async function handleLogout(e) {
+        let success = await authFunctions.logout();
+        if (success) {
+            const { history } = props;
+            history.push("/login");
+        }
+    }
+
+    if (!authFunctions.isLogged()) {
+        return <Redirect to="/login" />
     }
 
     return (
@@ -113,12 +118,19 @@ export default function TodoList(props) {
                     onChange={handleHideCompleted}
                 />
             </div>
+            <button onClick={() => handleLogout()}>CLICK MEEE</button>
         </section>
     );
 }
 
-function createSortedListMemo(sortFunction, listToSort) {
+// create memo list with filter
+function createSortedListMemo(sortFunction, listToSort, hideCompleted) {
     let arrTodos = listToSort.slice();
     arrTodos.sort(sortFunction);
-    return arrTodos;
+    return hideCompleted ? hideCompletedList(arrTodos) : arrTodos;
+}
+
+// wrapper function to filter out the incomplete todos
+function hideCompletedList(todoList) {
+    return todoList.filter(todo => (todo.state === 'INCOMPLETE'));
 }
