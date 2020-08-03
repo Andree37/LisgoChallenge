@@ -4,7 +4,8 @@ export const Store = React.createContext();
 
 const initialState = {
     todos: [],
-    authToken: null
+    authToken: null,
+    users: []
 }
 
 function reducer(state, action) {
@@ -22,6 +23,10 @@ function reducer(state, action) {
             return { ...state, authToken: action.payload };
         case 'LOGOUT':
             return { ...state, authToken: null };
+        case 'FETCH_USERS':
+            return { ...state, users: action.payload };
+        case 'ADD_USER':
+            return { ...state, users: [...state.users, action.payload] };
         default:
             return state;
     }

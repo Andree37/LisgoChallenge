@@ -77,6 +77,11 @@ export default function TodoList(props) {
         }
     }
 
+    function adminPage() {
+        const { history } = props;
+        history.push("/admin");
+    }
+
     if (!authFunctions.isLogged()) {
         return <Redirect to="/login" />
     }
@@ -119,6 +124,7 @@ export default function TodoList(props) {
                 />
             </div>
             <button onClick={() => handleLogout()}>CLICK MEEE</button>
+            <button onClick={() => adminPage()}>ADMIN</button>
         </section>
     );
 }

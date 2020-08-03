@@ -4,6 +4,7 @@ import { Store } from './Store/Store';
 import TodoList from './Todos/TodoList'
 import useTodoFunctions from './Todos/TodoFunctions';
 import LoginForm from './Auth/LoginForm';
+import AdminPage from './Admin/AdminPage';
 
 function App() {
   const { state } = useContext(Store);
@@ -18,6 +19,7 @@ function App() {
     <Router>
       <Switch>
         <Route path="/login" component={LoginForm} />
+        <Route path="/admin" component={AdminPage} />
         <Route path="/" component={TodoList} />
       </Switch>
     </Router>
