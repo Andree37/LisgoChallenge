@@ -16,12 +16,7 @@ const create = async (request, h) => {
         s_id: result.s_id,
         state: result.state,
         description: result.description,
-        date_added: result.date_added,
-        creator: {
-            id: result.creator.id,
-            name: result.creator.name,
-            surname: result.creator.surname,
-        }
+        date_added: result.date_added
     }
     return h.response(obj).code(201);
 }

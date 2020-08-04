@@ -34,6 +34,16 @@ module.exports = [
         path: '/todos',
         handler: todoHandler.get,
         options: {
+            validate: {
+                query: Joi.object({
+                    filter: Joi.string()
+                        .valid('ALL', 'COMPLETE', 'INCOMPLETE')
+                        .description('What to filter on DB call'),
+                    orderBy: Joi.string()
+                        .valid('DESCRIPTION', 'DATE_ADDED')
+                        .description('What to filter on DB call')
+                })
+            },
             response: {
                 status: {
                     200: Joi.array().items(todoSchema),
