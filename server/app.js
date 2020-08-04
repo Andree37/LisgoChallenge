@@ -39,6 +39,7 @@ const init = async () => {
     server.route(routes);
 
     await server.register(hapiAuthJwt2);
+    await server.register([require('vision'), require('inert'), require('lout')]);
 
     server.auth.strategy(jwtStrategy.name, jwtStrategy.schema, jwtStrategy.options);
 

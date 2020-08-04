@@ -11,11 +11,9 @@ module.exports = Joi.object({
         .required()
         .description("User's surname.")
         .example("Doe"),
-    role: Joi.object({
-        type: Joi.string()
-            .valid('normal', 'admin')
-            .required()
-            .description("User's role.")
-            .example("normal"),
-    })
+    password: Joi.string()
+        .min(3)
+        .required()
+        .description("User's password.")
+        .example("password"),
 });

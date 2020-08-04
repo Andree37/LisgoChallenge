@@ -1,7 +1,7 @@
 'use strict';
 
 const loginHandler = require('../handlers/loginHandler');
-const usersSchema = require('../schemas/usersSchema');
+const authSchema = require('../schemas/authSchema');
 
 module.exports = [
     {
@@ -10,7 +10,7 @@ module.exports = [
         options:{
             auth: false,
             validate: {
-                payload: usersSchema
+                payload: authSchema
             }
         },
         handler: loginHandler.login
