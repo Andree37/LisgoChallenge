@@ -1,30 +1,63 @@
 import React, { useState, useEffect, useContext } from 'react';
-import useAdminFunctions from './AdminFunctions';
 import { Store } from '../Store/Store';
+import useAuthFunctions from '../Auth/AuthFunctions';
+import { Redirect } from 'react-router-dom';
+import '../Todos/Todo.css';
 
 export default function AdminPage(props) {
     const { state } = useContext(Store);
     const [usersList, setUsersList] = useState([]);
+    const [checkTodos, setCheckTodos] = useState([]);
 
-    const adminFunctions = useAdminFunctions();
+    const authFunctions = useAuthFunctions();
 
     useEffect(() => {
-        async function a() {
-            //load users
-            let success = await adminFunctions.getUsers();
-            console.log(success);
-            if (success) {
-                setUsersList(state.users);
-            }
+        setUsersList(state.users);
+    }, [state.users])
+
+    async function handleLogout(e) {
+        let success = await authFunctions.logout();
+        if (success) {
+            const { history } = props;
+            history.push("/login");
         }
-        a();
-    }, [])
+    }
+
+    function listTodos(userID) {
+        let userTodos = state.todos.filter(t => {
+            return t.user_id === userID
+        });
+
+        setCheckTodos(userTodos);
+    }
+
+    if (!authFunctions.isLogged()) {
+        return <Redirect to="/login" />
+    }
 
     return (
         <section>
-            <h1>Yo</h1>
+            <h1>Click this button to Logout</h1>
+            <button onClick={handleLogout}>Logout</button>
+            <hr/>
             {usersList.map(user => {
-                return <h2>{user.name}</h2>
+                return (
+                    <li key={user.s_id}>
+                        <button onClick={() => listTodos(user.id)} className="link-button">{user.name}</button>
+                    </li>)
+            })}
+            <h2>User's Todos below:</h2>
+            {checkTodos.map(todo => {
+                return (
+                    <li key={todo.s_id}>
+                        <input
+                            className="tasks"
+                            type="text"
+                            value={todo.description}
+                            readOnly="readonly"
+                        />
+                    </li>
+                )
             })}
         </section>
     );

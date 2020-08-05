@@ -3,11 +3,12 @@
 const Users = require('../models/usersModel');
 const Roles = require('../models/rolesModel');
 const hash = require('../utils/hash');
+const errorResponse = require('../utils/errorResponse');
 
 const create = async (request, h) => {
     //only admin can access this endpoint
     if (request.auth.credentials.data.type !== "admin") {
-        return h.response("only admin can create a new user").code(401);
+        return h.response(errorResponse.error401("Only admin can create a new user")).code(401);
     }
 
     // payload, json with name, surname and password
@@ -18,7 +19,7 @@ const create = async (request, h) => {
     let selectedType = request.payload['role'];
 
     if (!selectedType) {
-        return h.response("Bad Request, missing role attribute name").code(400);
+        return h.response(errorResponse.error400("Bad Request, missing role attribute name")).code(400);
     }
     let role = await Roles.query().findOne({type: selectedType.toString()});
 
@@ -36,14 +37,13 @@ const create = async (request, h) => {
 }
 
 const get = async (request, h) => {
-    console.log(request.auth.credentials.data);
     if (request.auth.credentials.data.type !== "admin") {
        return h.response("User has to be an admin to get all other users").code(401);
     }
     let result = await Users.query()
             .withGraphFetched('role')
             .orderBy('name');
-    return h.response(result);
+    return h.response(result).code(200);
 }
 
 module.exports = {

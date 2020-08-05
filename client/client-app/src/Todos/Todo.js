@@ -76,14 +76,14 @@ export default function Todo(props) {
             <button
                 type="button"
                 className="link-button"
-                onClick={() => changeDescription()}>
+                onClick={changeDescription}>
                 Edit
             </button>
             <label>/</label>
             <button
                 type="button"
                 className="link-button"
-                onClick={() => handleDelete()}>
+                onClick={handleDelete}>
                 Delete
             </button>
         </section>

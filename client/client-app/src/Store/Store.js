@@ -22,7 +22,7 @@ function reducer(state, action) {
         case 'LOGIN':
             return { ...state, authToken: action.payload };
         case 'LOGOUT':
-            return { ...state, authToken: null };
+            return { todos:[], users: [], authToken: null };
         case 'FETCH_USERS':
             return { ...state, users: action.payload };
         case 'ADD_USER':

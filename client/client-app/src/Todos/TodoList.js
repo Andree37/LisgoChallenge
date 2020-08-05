@@ -85,6 +85,9 @@ export default function TodoList(props) {
     if (!authFunctions.isLogged()) {
         return <Redirect to="/login" />
     }
+    if (state.users.length !== 0) {
+        return <Redirect to="/admin" />
+    }
 
     return (
         <section className="container">
@@ -105,7 +108,7 @@ export default function TodoList(props) {
             <button
                 type="button"
                 className="link-button"
-                onClick={() => handleToggleTodoList()}>
+                onClick={handleToggleTodoList}>
                 Tasks / {order}
             </button>
             <hr />
@@ -123,8 +126,8 @@ export default function TodoList(props) {
                     onChange={handleHideCompleted}
                 />
             </div>
-            <button onClick={() => handleLogout()}>CLICK MEEE</button>
-            <button onClick={() => adminPage()}>ADMIN</button>
+            <button onClick={handleLogout}>LOG OUT</button>
+            {state.users.length !== 0 ? <button onClick={adminPage}>ADMIN</button> : <div></div>}
         </section>
     );
 }
