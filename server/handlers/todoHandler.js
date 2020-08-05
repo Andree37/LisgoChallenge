@@ -8,10 +8,17 @@ const create = async (request, h) => {
     let data = request.payload;
     let token = request.auth.credentials;
     data['user_id'] = token.data.user_id;
-    let inserted = await Todo.query()
+    let result = await Todo.query()
         .insert(data)
         .returning('*');
-    return h.response(inserted).code(201);
+    let obj = {
+        id: result.id,
+        s_id: result.s_id,
+        state: result.state,
+        description: result.description,
+        date_added: result.date_added
+    }
+    return h.response(obj).code(201);
 }
 
 const get = async (request, h) => {
@@ -35,7 +42,21 @@ const get = async (request, h) => {
             .where(whereQuery)
             .orderBy(orderBy.toLowerCase());
     }
-    return h.response(result);
+    let objs = result.map(r => {
+        return {
+            id: r.id,
+            s_id: r.s_id,
+            state: r.state,
+            description: r.description,
+            date_added: r.date_added,
+            creator: {
+                id: r.creator.id,
+                name: r.creator.name,
+                surname: r.creator.surname,
+            }
+        }
+    })
+    return h.response(objs).code(200);
 }
 
 const edit = async (request, h) => {
@@ -62,7 +83,7 @@ const edit = async (request, h) => {
         }
     } catch {
         // if the id doesnt match uuid format, it throws an error, here we catch it
-        return h.response(errorResponse.error404('Not found')).code(404);
+        return h.response(errorResponse.error400('ID not uuid')).code(400);
     }
 
     // payload has state and description as json so we add the new date for updated
@@ -72,7 +93,15 @@ const edit = async (request, h) => {
         .patch(patch)
         .returning('*');
 
-    return h.response(result);
+    let obj = {
+        id: result.id,
+        s_id: result.s_id,
+        state: result.state,
+        description: result.description,
+        date_added: result.date_added
+    }
+
+    return h.response(obj).code(200);
 }
 
 const remove = async (request, h) => {
@@ -88,12 +117,8 @@ const remove = async (request, h) => {
         if (token.data.user_id !== item.user_id) {
             return h.response(errorResponse.error401('No permissions to remove this todo')).code(401);
         }
-        // if item doesn't exist
-        if (Array.isArray(item) && !item.length) {
-            return h.response(errorResponse.error404("ID not existent")).code(404);
-        }
     } catch {
-        return h.response(errorResponse.error400("ID not uuid")).code(400);
+        return h.response(errorResponse.error404("ID not existent")).code(404);
     }
     await Todo.query()
         .delete()

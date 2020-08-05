@@ -23,14 +23,14 @@ const error404 = (message) => {
 }
 
 const defaultError = (statusCode, error, message) => {
-    return JSON.stringify({
+    return {
         statusCode: statusCode,
         error: error,
         message: message,
         attributes: {
             error: message
         }
-    });
+    }
 }
 
 module.exports = {

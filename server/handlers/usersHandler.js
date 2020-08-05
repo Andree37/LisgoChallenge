@@ -38,12 +38,23 @@ const create = async (request, h) => {
 
 const get = async (request, h) => {
     if (request.auth.credentials.data.type !== "admin") {
-       return h.response("User has to be an admin to get all other users").code(401);
+        return h.response(errorResponse.error401("User has to be an admin to get all other users")).code(401);
     }
     let result = await Users.query()
-            .withGraphFetched('role')
-            .orderBy('name');
-    return h.response(result).code(200);
+        .withGraphFetched('role')
+        .orderBy('name');
+    console.log(result);
+    let objs = result.map(r => {
+        return {
+            name: r.name,
+            surname: r.surname,
+            role: {
+                type: r.role.type
+            }
+        }
+    });
+
+    return h.response(objs).code(200);
 }
 
 module.exports = {
