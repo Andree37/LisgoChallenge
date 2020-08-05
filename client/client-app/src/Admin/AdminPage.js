@@ -25,7 +25,7 @@ export default function AdminPage(props) {
 
     function listTodos(userID) {
         let userTodos = state.todos.filter(t => {
-            return t.user_id === userID
+            return t.creator.id === userID
         });
 
         setCheckTodos(userTodos);

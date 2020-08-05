@@ -46,8 +46,10 @@ export default function TodoList(props) {
         // represent the todos in defined order
         setOrder(orders[currentRepresentation]);
         // represent hidden with filter wrapper
-        setListTodos(sortedArray[currentRepresentation]);
-    }, [state.todos, currentRepresentation, hideCompleted, sortedDateTodos, sortedDescTodos, sortedAscTodos]);
+        if(state.todos) {
+            setListTodos(sortedArray[currentRepresentation]);
+        }   
+    }, [state.todos, currentRepresentation, hideCompleted, sortedDateTodos, sortedDescTodos, sortedAscTodos, todoFunctions]);
 
     function handleToggleTodoList() {
         let representation = (currentRepresentation + 1) % 3
@@ -85,10 +87,10 @@ export default function TodoList(props) {
     if (!authFunctions.isLogged()) {
         return <Redirect to="/login" />
     }
-    if (state.users.length !== 0) {
+    if (state.users && state.users.length !== 0) {
         return <Redirect to="/admin" />
     }
-
+    
     return (
         <section className="container">
             <div className="header">
@@ -127,13 +129,14 @@ export default function TodoList(props) {
                 />
             </div>
             <button onClick={handleLogout}>LOG OUT</button>
-            {state.users.length !== 0 ? <button onClick={adminPage}>ADMIN</button> : <div></div>}
+            {state.users && state.users.length !== 0 ? <button onClick={adminPage}>ADMIN</button> : <div></div>}
         </section>
     );
 }
 
 // create memo list with filter
 function createSortedListMemo(sortFunction, listToSort, hideCompleted) {
+    if(!listToSort) return;
     let arrTodos = listToSort.slice();
     arrTodos.sort(sortFunction);
     return hideCompleted ? hideCompletedList(arrTodos) : arrTodos;

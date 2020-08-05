@@ -14,8 +14,8 @@ function App() {
 
   //get todos after app is mounted and if the authtoken is present
   useEffect(() => {
-    state.todos.length === 0 && state.authToken && todoFunctions.get() && adminFunctions.getUsers();
-  }, [state.todos, state.authToken, todoFunctions, adminFunctions]);
+    state.todos === null && state.authToken && todoFunctions.get() && adminFunctions.getUsers();
+  });
 
   return (
     <Router>

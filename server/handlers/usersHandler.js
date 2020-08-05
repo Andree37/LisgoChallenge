@@ -33,7 +33,17 @@ const create = async (request, h) => {
     let inserted = await Users.query()
         .insert(data)
         .returning('*');
-    return h.response(inserted).code(201);
+
+    let obj = {
+        id: inserted.id,
+        s_id: inserted.s_id,
+        name: inserted.name,
+        surname: inserted.surname,
+        role: {
+            type: selectedType
+        }
+    }
+    return h.response(obj).code(201);
 }
 
 const get = async (request, h) => {
@@ -46,6 +56,8 @@ const get = async (request, h) => {
     console.log(result);
     let objs = result.map(r => {
         return {
+            id: r.id,
+            s_id: r.s_id,
             name: r.name,
             surname: r.surname,
             role: {

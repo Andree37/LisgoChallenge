@@ -36,7 +36,7 @@ module.exports = [
             },
             response: {
                 status: {
-                    200: usersSchema,
+                    201: usersSchema,
                     400: errorSchema,
                     401: errorSchema
                 }
