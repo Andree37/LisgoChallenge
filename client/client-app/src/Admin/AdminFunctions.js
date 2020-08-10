@@ -9,7 +9,7 @@ export default function useAdminFunctions() {
             headers: { 'Authorization': state.authToken }
         });
         let data = await response.json();
-        if (Array.isArray(data)) {
+        if (Array.isArray(data) && response.ok) {
             dispatch({
                 type: 'FETCH_USERS',
                 payload: data
@@ -21,7 +21,31 @@ export default function useAdminFunctions() {
         }
     }
 
+    async function createUser(newUser) {
+        let objUser = JSON.stringify(newUser);
+        let response = await fetch("http://localhost:3000/users", {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': state.authToken
+            },
+            body: objUser
+        });
+        if (response.ok) {
+            let data = await response.json();
+            console.log(data)
+            dispatch({
+                type: 'ADD_USER',
+                payload: data
+            });
+            return true;
+        }
+        return false;
+    }
+
     return {
         getUsers,
+        createUser,
     }
 }
