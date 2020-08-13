@@ -1,8 +1,10 @@
 import { useContext } from 'react';
 import { Store } from '../Store/Store'
+import useLocalStorage from '../Store/LocalStorage';
 
 export default function useAuthFunctions() {
     const { state, dispatch } = useContext(Store);
+    const localStorage = useLocalStorage();
 
     async function login(name, surname, password) {
         let objTodo = JSON.stringify({ name, surname, password });
@@ -21,6 +23,7 @@ export default function useAuthFunctions() {
                 type: 'LOGIN',
                 payload: data.token
             });
+            localStorage.setItem('authToken', data.token);
             return true;
         }
         else {
