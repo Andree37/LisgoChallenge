@@ -8,6 +8,7 @@ export default function LoginForm(props) {
     const [password, setPassword] = useState("");
 
     const authFunctions = useAuthFunctions();
+    
 
     function handleNameChange(e) {
         setName(e.target.value);
@@ -29,10 +30,10 @@ export default function LoginForm(props) {
 
             // user is authenticated with the token
             if (success) {
-                history.push('/users');
+                history.push('/');
             }
             else {
-                alert("")
+                alert("Something went wrong...")
             }
         }
         catch (err) {
