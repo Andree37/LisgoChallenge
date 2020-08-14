@@ -46,9 +46,9 @@ export default function TodoList(props) {
         // represent the todos in defined order
         setOrder(orders[currentRepresentation]);
         // represent hidden with filter wrapper
-        if(state.todos) {
+        if (state.todos) {
             setListTodos(sortedArray[currentRepresentation]);
-        }   
+        }
     }, [state.todos, currentRepresentation, hideCompleted, sortedDateTodos, sortedDescTodos, sortedAscTodos, todoFunctions]);
 
     function handleToggleTodoList() {
@@ -87,10 +87,7 @@ export default function TodoList(props) {
     if (!authFunctions.isLogged()) {
         return <Redirect to="/login" />
     }
-    if (state.users && state.users.length !== 0) {
-        return <Redirect to="/admin" />
-    }
-    
+
     return (
         <section className="container">
             <div className="header">
@@ -136,7 +133,7 @@ export default function TodoList(props) {
 
 // create memo list with filter
 function createSortedListMemo(sortFunction, listToSort, hideCompleted) {
-    if(!listToSort) return;
+    if (!listToSort) return;
     let arrTodos = listToSort.slice();
     arrTodos.sort(sortFunction);
     return hideCompleted ? hideCompletedList(arrTodos) : arrTodos;

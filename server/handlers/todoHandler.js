@@ -26,8 +26,7 @@ const get = async (request, h) => {
     let orderBy = request.query.orderBy ? request.query.orderBy : 'DATE_ADDED';
 
     let token = request.auth.credentials;
-    // get all or only his todos (admin/normal user)
-    let whereQuery = token.data.type === "admin" ? {} : {'user_id': token.data.user_id};
+    let whereQuery = {'user_id': token.data.user_id};
 
     let result;
     if (filter) {
@@ -58,6 +57,35 @@ const get = async (request, h) => {
     })
     return h.response(objs).code(200);
 }
+
+const getAll = async (request, h) => {
+    let token = request.auth.credentials;
+
+    if (token.data.type !== 'admin') {
+        return h.response(errorResponse.error401('Only an admin can use this endpoint')).code(401);
+    }
+
+    let result = await Todo.query()
+        .withGraphFetched('creator')
+        .orderBy('date_added');
+
+    let objs = result.map(r => {
+        return {
+            id: r.id,
+            s_id: r.s_id,
+            state: r.state,
+            description: r.description,
+            date_added: r.date_added,
+            creator: {
+                id: r.creator.id,
+                name: r.creator.name,
+                surname: r.creator.surname,
+            }
+        }
+    })
+    return h.response(objs).code(200);
+}
+
 
 const edit = async (request, h) => {
     let id = request.params.id;
@@ -134,4 +162,5 @@ module.exports = {
     get,
     edit,
     remove,
+    getAll,
 };

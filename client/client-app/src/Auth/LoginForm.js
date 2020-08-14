@@ -31,6 +31,7 @@ export default function LoginForm(props) {
             // user is authenticated with the token
             if (success) {
                 history.push('/');
+                window.location.reload(false);
             }
             else {
                 alert("Something went wrong...")

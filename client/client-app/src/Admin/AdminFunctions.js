@@ -1,12 +1,19 @@
 import { useContext } from 'react';
 import { Store } from '../Store/Store'
+import useLocalStorage from '../Store/LocalStorage';
 
 export default function useAdminFunctions() {
     const { state, dispatch } = useContext(Store);
+    const localStorage = useLocalStorage();
 
     async function getUsers() {
+        let storageToken = localStorage.getItem('authToken');
+        let auth = state.authToken;
+        if (storageToken) {
+            auth = storageToken.data;
+        }
         let response = await fetch("http://localhost:3000/users", {
-            headers: { 'Authorization': state.authToken }
+            headers: { 'Authorization': auth }
         });
         let data = await response.json();
         if (Array.isArray(data) && response.ok) {
@@ -22,13 +29,18 @@ export default function useAdminFunctions() {
     }
 
     async function createUser(newUser) {
+        let storageToken = localStorage.getItem('authToken');
+        let auth = state.authToken;
+        if (storageToken) {
+            auth = storageToken.data;
+        }
         let objUser = JSON.stringify(newUser);
         let response = await fetch("http://localhost:3000/users", {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'Authorization': state.authToken
+                'Authorization': auth
             },
             body: objUser
         });

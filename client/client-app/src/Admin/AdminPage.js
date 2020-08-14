@@ -4,6 +4,7 @@ import useAuthFunctions from '../Auth/AuthFunctions';
 import { Redirect } from 'react-router-dom';
 import '../Todos/Todo.css';
 import useAdminFunctions from './AdminFunctions';
+import useTodoFunctions from '../Todos/TodoFunctions';
 
 export default function AdminPage(props) {
     const { state } = useContext(Store);
@@ -16,10 +17,12 @@ export default function AdminPage(props) {
 
     const authFunctions = useAuthFunctions();
     const adminFunctions = useAdminFunctions();
+    const todoFunctions = useTodoFunctions();
 
     useEffect(() => {
         setUsersList(state.users);
-    }, [state.users])
+        todoFunctions.getAll();
+    }, [state.users, todoFunctions])
 
     async function handleLogout(e) {
         let success = await authFunctions.logout();
@@ -30,7 +33,7 @@ export default function AdminPage(props) {
     }
 
     function listTodos(userID) {
-        let userTodos = state.todos.filter(t => {
+        let userTodos = state.allTodos.filter(t => {
             return t.creator.id === userID
         });
 
@@ -74,7 +77,11 @@ export default function AdminPage(props) {
 
             alert("Created a new User!");
         }
+    }
 
+    async function handleBack() {
+        const { history } = props;
+        history.push("/");
     }
 
     if (!authFunctions.isLogged()) {
@@ -83,6 +90,8 @@ export default function AdminPage(props) {
 
     return (
         <section>
+            <h1>Click this button to go back</h1>
+            <button onClick={handleBack}>Go Back</button>
             <h1>Click this button to Logout</h1>
             <button onClick={handleLogout}>Logout</button>
             <hr />

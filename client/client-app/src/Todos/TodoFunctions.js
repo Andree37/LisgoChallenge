@@ -1,12 +1,19 @@
 import { useContext } from 'react';
 import { Store } from '../Store/Store'
+import useLocalStorage from '../Store/LocalStorage';
 
 export default function useTodoFunctions() {
     const { state, dispatch } = useContext(Store);
+    const localStorage = useLocalStorage();
 
     async function getTodos() {
+        let storageToken = localStorage.getItem('authToken');
+        let auth = state.authToken;
+        if (storageToken) {
+            auth = storageToken.data;
+        }
         let response = await fetch("http://localhost:3000/todos?orderBy=DATE_ADDED", {
-            headers: { 'Authorization': state.authToken }
+            headers: { 'Authorization': auth }
         });
         let data = await response.json();
         if (Array.isArray(data)) {
@@ -21,10 +28,37 @@ export default function useTodoFunctions() {
         }
     }
 
+    async function getAllTodos() {
+        let storageToken = localStorage.getItem('authToken');
+        let auth = state.authToken;
+        if (storageToken) {
+            auth = storageToken.data;
+        }
+        let response = await fetch("http://localhost:3000/todos/all", {
+            headers: { 'Authorization': auth }
+        });
+        let data = await response.json();
+        if (Array.isArray(data)) {
+            dispatch({
+                type: 'FETCH_ALL_TODOS',
+                payload: data
+            });
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     async function deleteTodo(id) {
+        let storageToken = localStorage.getItem('authToken');
+        let auth = state.authToken;
+        if (storageToken) {
+            auth = storageToken.data;
+        }
         let response = await fetch(`http://localhost:3000/todos/${id}`, {
             method: 'DELETE',
-            headers: { 'Authorization': state.authToken }
+            headers: { 'Authorization': auth }
         });
         if (response.ok) {
             let newTodos = state.todos.filter(t => {
@@ -41,19 +75,23 @@ export default function useTodoFunctions() {
     }
 
     async function editTodo(id, changes) {
+        let storageToken = localStorage.getItem('authToken');
+        let auth = state.authToken;
+        if (storageToken) {
+            auth = storageToken.data;
+        }
         let objTodo = JSON.stringify(changes);
         let response = await fetch(`http://localhost:3000/todos/${id}`, {
             method: 'PATCH',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'Authorization': state.authToken
+                'Authorization': auth
             },
             body: objTodo
         });
         if (response.ok) {
             let data = await response.json();
-            // probably a better way of doing this, making it O(1) need to think more, maybe getting it from the key on the array?
             let copyTodos = state.todos.slice();
             copyTodos.forEach(t => {
                 if (t.id === id) {
@@ -73,13 +111,18 @@ export default function useTodoFunctions() {
     }
 
     async function createTodo(description) {
+        let storageToken = localStorage.getItem('authToken');
+        let auth = state.authToken;
+        if (storageToken) {
+            auth = storageToken.data;
+        }
         let objTodo = JSON.stringify({ description });
         let response = await fetch('http://localhost:3000/todos', {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'Authorization': state.authToken
+                'Authorization': auth
             },
             body: objTodo
         });
@@ -100,7 +143,8 @@ export default function useTodoFunctions() {
         get: getTodos,
         edit: editTodo,
         delete: deleteTodo,
-        create: createTodo
+        create: createTodo,
+        getAll: getAllTodos,
     }
 }
 

@@ -94,5 +94,18 @@ module.exports = [
                 }
             }
         }
-    }
+    },
+    {
+        method: 'GET',
+        path: '/todos/all',
+        handler: todoHandler.getAll,
+        options: {
+            response: {
+                status: {
+                    200: Joi.array().items(todoSchema),
+                    401: errorSchema
+                }
+            }
+        }
+    },
 ];

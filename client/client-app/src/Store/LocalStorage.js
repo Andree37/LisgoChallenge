@@ -20,33 +20,42 @@ export default function useLocalStorage() {
             return true;
         } catch (e) {
             return e instanceof DOMException && (
-                    // everything except Firefox
-                    e.code === 22 ||
-                    // Firefox
-                    e.code === 1014 ||
-                    // test name field too, because code might not be present
-                    // everything except Firefox
-                    e.name === 'QuotaExceededError' ||
-                    // Firefox
-                    e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+                // everything except Firefox
+                e.code === 22 ||
+                // Firefox
+                e.code === 1014 ||
+                // test name field too, because code might not be present
+                // everything except Firefox
+                e.name === 'QuotaExceededError' ||
+                // Firefox
+                e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
                 // acknowledge QuotaExceededError only if there's something already stored
                 (storage && storage.length !== 0);
         }
     }
 
     function getItem(key) {
+        let parsedItem = undefined;
         let item = window.localStorage.getItem(key);
         if (item && item.expTime > new Date()) {
             //check if exp has passed
             window.localStorage.removeItem(key);
             return undefined
         }
-        return item;
+        if(item) {
+            parsedItem = JSON.parse(item);
+        }
+        return parsedItem;
+    }
+
+    function removeItem(key) {
+        window.localStorage.removeItem(key);
     }
 
     return {
         getItem,
         setItem,
+        removeItem,
         storageAvailable,
     }
 }

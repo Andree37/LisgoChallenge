@@ -19,11 +19,15 @@ export default function useAuthFunctions() {
         });
         if (response.ok) {
             let data = await response.json();
-            dispatch({
-                type: 'LOGIN',
-                payload: data.token
-            });
-            localStorage.setItem('authToken', data.token);
+            if (localStorage.storageAvailable('localStorage')) {
+                localStorage.setItem('authToken', data.token);
+            }
+            else {
+                dispatch({
+                    type: 'LOGIN',
+                    payload: data.token
+                });
+            }
             return true;
         }
         else {
@@ -32,14 +36,20 @@ export default function useAuthFunctions() {
     }
 
     async function logout() {
-        if (state.authToken) {
+        let storageToken = localStorage.getItem('authToken');
+        if (state.authToken || storageToken) {
+            let auth = state.authToken;
+            if (storageToken) {
+                auth = storageToken.data;
+            }
             await fetch('http://localhost:3000/logout', {
                 method: 'POST',
-                headers: { 'Authorization': state.authToken }
+                headers: { 'Authorization': auth }
             });
             dispatch({
                 type: 'LOGOUT'
             });
+            localStorage.removeItem('authToken');
             return true;
         }
         else {
@@ -48,7 +58,7 @@ export default function useAuthFunctions() {
     }
 
     function isLogged() {
-        return state.authToken !== null
+        return state.authToken !== null || localStorage.getItem('authToken') !== null;
     }
 
     return {
