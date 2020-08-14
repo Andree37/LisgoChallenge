@@ -34,7 +34,7 @@ export default function LoginForm(props) {
                 window.location.reload(false);
             }
             else {
-                alert("Something went wrong...")
+                alert("Cant log in... Check your information")
             }
         }
         catch (err) {

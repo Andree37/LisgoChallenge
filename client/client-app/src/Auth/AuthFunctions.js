@@ -58,7 +58,7 @@ export default function useAuthFunctions() {
     }
 
     function isLogged() {
-        return state.authToken !== null || localStorage.getItem('authToken') !== null;
+        return state.authToken || localStorage.getItem('authToken');
     }
 
     return {

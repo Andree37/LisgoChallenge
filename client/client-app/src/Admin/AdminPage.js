@@ -98,7 +98,7 @@ export default function AdminPage(props) {
             {usersList.map(user => {
                 return (
                     <li key={user.s_id}>
-                        <button onClick={() => listTodos(user.id)} className="link-button">{user.name}</button>
+                        <button onClick={() => listTodos(user.id)} className="link-button">{user.name} {user.surname}</button>
                     </li>)
             })}
             <h2>User's Todos below:</h2>
@@ -118,13 +118,13 @@ export default function AdminPage(props) {
             <h2>Create a new User below:</h2>
             <div>
                 <label>Name:
-                    <input type="text" value={newUserName} onChange={handleNewUserNameChange} />
+                    <input type="text" value={newUserName} onChange={handleNewUserNameChange} required/>
                 </label>
                 <label>Surname:
-                    <input type="text" value={newUserSurname} onChange={handleNewUserSurnameChange} />
+                    <input type="text" value={newUserSurname} onChange={handleNewUserSurnameChange} required/>
                 </label>
                 <label>Password:
-                    <input type="password" value={newUserPassword} onChange={handleNewUserPasswordChange} />
+                    <input type="password" value={newUserPassword} onChange={handleNewUserPasswordChange} required/>
                 </label>
                 <select value={newUserRole} onChange={handleNewUserRole}>
                     <option value="normal">Normal</option>
