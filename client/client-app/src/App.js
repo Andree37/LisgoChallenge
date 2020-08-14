@@ -6,15 +6,17 @@ import useTodoFunctions from './Todos/TodoFunctions';
 import LoginForm from './Auth/LoginForm';
 import AdminPage from './Admin/AdminPage';
 import useAdminFunctions from './Admin/AdminFunctions';
+import useLocalStorage from './Store/LocalStorage';
 
 function App() {
   const { state } = useContext(Store);
   const todoFunctions = useTodoFunctions();
   const adminFunctions = useAdminFunctions();
+  const localStorage = useLocalStorage();
 
   //get todos after app is mounted and if the authtoken is present
   useEffect(() => {
-    state.todos === null && state.authToken && todoFunctions.get() && adminFunctions.getUsers();
+    state.todos === null && (state.authToken || localStorage.getItem('authToken')) && todoFunctions.get() && adminFunctions.getUsers();
   });
 
   return (

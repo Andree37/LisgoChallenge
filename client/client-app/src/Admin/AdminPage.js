@@ -4,6 +4,7 @@ import useAuthFunctions from '../Auth/AuthFunctions';
 import { Redirect } from 'react-router-dom';
 import '../Todos/Todo.css';
 import useAdminFunctions from './AdminFunctions';
+import useTodoFunctions from '../Todos/TodoFunctions';
 
 export default function AdminPage(props) {
     const { state } = useContext(Store);
@@ -16,10 +17,12 @@ export default function AdminPage(props) {
 
     const authFunctions = useAuthFunctions();
     const adminFunctions = useAdminFunctions();
+    const todoFunctions = useTodoFunctions();
 
     useEffect(() => {
         setUsersList(state.users);
-    }, [state.users])
+        todoFunctions.getAll();
+    }, [state.users, todoFunctions])
 
     async function handleLogout(e) {
         let success = await authFunctions.logout();
@@ -30,7 +33,7 @@ export default function AdminPage(props) {
     }
 
     function listTodos(userID) {
-        let userTodos = state.todos.filter(t => {
+        let userTodos = state.allTodos.filter(t => {
             return t.creator.id === userID
         });
 
@@ -74,7 +77,11 @@ export default function AdminPage(props) {
 
             alert("Created a new User!");
         }
+    }
 
+    async function handleBack() {
+        const { history } = props;
+        history.push("/");
     }
 
     if (!authFunctions.isLogged()) {
@@ -83,13 +90,15 @@ export default function AdminPage(props) {
 
     return (
         <section>
+            <h1>Click this button to go back</h1>
+            <button onClick={handleBack}>Go Back</button>
             <h1>Click this button to Logout</h1>
             <button onClick={handleLogout}>Logout</button>
             <hr />
             {usersList.map(user => {
                 return (
                     <li key={user.s_id}>
-                        <button onClick={() => listTodos(user.id)} className="link-button">{user.name}</button>
+                        <button onClick={() => listTodos(user.id)} className="link-button">{user.name} {user.surname}</button>
                     </li>)
             })}
             <h2>User's Todos below:</h2>
@@ -109,13 +118,13 @@ export default function AdminPage(props) {
             <h2>Create a new User below:</h2>
             <div>
                 <label>Name:
-                    <input type="text" value={newUserName} onChange={handleNewUserNameChange} />
+                    <input type="text" value={newUserName} onChange={handleNewUserNameChange} required/>
                 </label>
                 <label>Surname:
-                    <input type="text" value={newUserSurname} onChange={handleNewUserSurnameChange} />
+                    <input type="text" value={newUserSurname} onChange={handleNewUserSurnameChange} required/>
                 </label>
                 <label>Password:
-                    <input type="password" value={newUserPassword} onChange={handleNewUserPasswordChange} />
+                    <input type="password" value={newUserPassword} onChange={handleNewUserPasswordChange} required/>
                 </label>
                 <select value={newUserRole} onChange={handleNewUserRole}>
                     <option value="normal">Normal</option>
